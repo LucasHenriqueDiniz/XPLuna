@@ -1620,8 +1620,12 @@ img[class*="img_df"],
 }
 
 /* cabecalho de coluna, identico nas tres (e igual ao "Online - 4") */
+/* CUIDADO: [class*="header__"] tambem casa com o .header__00943
+   que fica DENTRO de cada cartao de "Ativo agora" - com o
+   gradiente, metade das linhas ganhava uma faixa bege de cabecalho
+   e a lista virava um sanfona de margens. So o <h2> da coluna e
+   cabecalho de verdade. */
 [class*="nowPlayingColumn__"] > h2,
-[class*="nowPlayingColumn__"] [class*="header__"],
 [class*="membersWrap"] [class*="membersGroup_"],
 [class*="peopleColumn__"] h2 {
     background: linear-gradient(180deg, #ffffff, #f1efe2 60%, #e4e1d1) !important;
@@ -3546,4 +3550,39 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
    usuario. ------------------------------------------------------ */
 [class*="videoGrid_"] [class*="tile__"] {
     background: #6e6a5e !important;
+}
+
+/* ============================================================
+   (AJ) O QUADRADO PRETO SOBRE O AVATAR EM "ATIVO AGORA"
+
+   Nao era status nem mascara: e o .voiceSectionIconWrapper__00943,
+   o cracha do icone de voz/jogo que fica sobreposto ao avatar. Ele
+   usa a cor de fundo do painel para se recortar do avatar, e essa
+   cor, no tema escuro que o Discord mantem por baixo, e quase
+   preta - virava um quadrado preto no canto de cada avatar.
+
+   Aqui ele vira um cracha branco com moldura fina, e o icone
+   dentro fica preto.
+   ============================================================ */
+[class*="voiceSectionIconWrapper__"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 1px !important;
+}
+[class*="voiceSectionIcon__"] path,
+[class*="voiceSectionIcon__"] {
+    fill: #000000 !important;
+    color: #000000 !important;
+}
+
+/* as linhas de "Ativo agora" ficam com o mesmo respiro das outras
+   listas do tema: sem margem propria, separadas so pela divisoria */
+[class*="nowPlayingColumn__"] [class*="header__"],
+[class*="nowPlayingColumn__"] [class*="body__"] {
+    background: transparent !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 4px 8px !important;
 }
