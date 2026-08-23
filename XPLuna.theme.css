@@ -3574,10 +3574,12 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     box-shadow: none !important;
     padding: 1px !important;
 }
+/* alto-falante em azul, nao em preto: e o mesmo tom do icone de som do XP
+   e casa com o emoji de canal de voz que aparece ao lado */
 [class*="voiceSectionIcon__"] path,
 [class*="voiceSectionIcon__"] {
-    fill: #000000 !important;
-    color: #000000 !important;
+    fill: #1f6fe0 !important;
+    color: #1f6fe0 !important;
 }
 
 /* as linhas de "Ativo agora" ficam com o mesmo respiro das outras
