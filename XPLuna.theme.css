@@ -31,8 +31,11 @@
 @import url('https://refact0r.github.io/midnight-discord/build/midnight.css');
 
 body {
-    /* fontes: Tahoma e a fonte de UI do XP, Lucida Console e o console */
-    --font: 'Tahoma';
+    /* fontes: Tahoma e a fonte de UI do XP, Lucida Console e o console.
+       'Segoe UI Emoji' entra em toda pilha de fonte do tema porque sem ela
+       o fallback cai na Segoe UI Symbol, monocromatica: emoji em nome de
+       canal virava um quadrado preto (ex.: o F50A do "CALL"). */
+    --font: 'Tahoma', 'Segoe UI Emoji';
     --code-font: 'Lucida Console';
     font-weight: 400;
 
@@ -299,7 +302,7 @@ body,
 /* rotulos decorativos de menu do XP, antes das acoes de verdade */
 [data-window-chrome="true"] > [class*="trailing_"]::before {
     content: 'Arquivo    Editar    Exibir    Favoritos    Ferramentas';
-    font: 400 12px Tahoma, sans-serif;
+    font: 400 12px Tahoma, 'Segoe UI Emoji', sans-serif;
     color: #000000;
     display: flex;
     align-items: center;
@@ -566,18 +569,18 @@ body,
    cinza-escuto em vez de preto puro, que era o que pesava.
    ============================================================ */
 [data-window-chrome="true"] {
-    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-family: Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     font-size: 11px !important;
 }
 [data-window-chrome="true"] [class*="title_"] {
-    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-family: Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     font-size: 11px !important;
     font-weight: 700 !important;
     color: #ffffff !important;
     text-shadow: 1px 1px #0f1089;
 }
 [data-window-chrome="true"] > [class*="trailing_"]::before {
-    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-family: Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     font-size: 11px !important;
     color: #000000 !important;
 }
@@ -912,7 +915,7 @@ body,
     border-radius: 0 !important;
     box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25) !important;
     color: #000000 !important;
-    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-family: Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     font-size: 11px !important;
     font-weight: 400 !important;
 }
@@ -1202,7 +1205,7 @@ foreignObject {
 [class*="contentColumn_"] h1,
 [class*="contentColumn_"] h2 {
     color: #0046d5 !important;
-    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-family: Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
 }
 /* linhas divisorias como sulco XP em vez de fio branco */
 [class*="contentColumn_"] [class*="divider_"] {
@@ -1292,7 +1295,7 @@ foreignObject {
     border-top: 1px solid var(--xp-light) !important;
     border-bottom: 1px solid var(--xp-shadow) !important;
     color: #000000 !important;
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
     padding: 3px 8px !important;
@@ -1501,7 +1504,7 @@ foreignObject {
     border-top: 1px solid var(--xp-light) !important;
     border-bottom: 1px solid var(--xp-shadow) !important;
     color: #000000 !important;
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
     padding: 3px 8px !important;
@@ -1563,7 +1566,7 @@ foreignObject {
 .user-profile-sidebar h2,
 .user-profile-sidebar h3 {
     color: #000000 !important;
-    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-family: Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
 }
 /* as molduras decorativas do perfil (aquele quadro roxo) so
    fecham em cima de cartao arredondado - fora */
@@ -1632,7 +1635,7 @@ img[class*="img_df"],
     border-top: 1px solid var(--xp-light) !important;
     border-bottom: 1px solid var(--xp-shadow) !important;
     color: #000000 !important;
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
     padding: 3px 8px !important;
@@ -1822,7 +1825,7 @@ img[class*="img_df"],
 /* rotulos das secoes ("Membro desde", "Lista de desejos") como titulo XP */
 .user-profile-sidebar h2,
 .user-profile-sidebar h3 {
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #0046d5 !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
@@ -1857,7 +1860,7 @@ img[class*="img_df"],
 }
 [class*="codeBlockLang_"] {
     color: #4a4a4a !important;
-    font: 700 10px Tahoma, sans-serif !important;
+    font: 700 10px Tahoma, 'Segoe UI Emoji', sans-serif !important;
 }
 
 /* codigo inline: relevo leve, sem virar bloco */
@@ -1951,7 +1954,7 @@ pre:has(> code.vc-shiki-code) {
     background: linear-gradient(180deg, #ffffff, #f1efe2 60%, #e4e1d1) !important;
     border-bottom: 1px solid var(--xp-shadow) !important;
     color: #000000 !important;
-    font: 700 10px Tahoma, sans-serif !important;
+    font: 700 10px Tahoma, 'Segoe UI Emoji', sans-serif !important;
 }
 .vc-shiki-btn {
     border: 1px solid var(--xp-frame-dark) !important;
@@ -2180,7 +2183,7 @@ section:has(> [class*="upperContainer_"]) {
 }
 [class*="upperContainer_"] [class*="searchBar_"] input,
 [class*="upperContainer_"] [class*="searchBar_"] [class*="input_"] {
-    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
     height: 18px !important;
     padding: 0 !important;
@@ -2195,7 +2198,7 @@ section:has(> [class*="upperContainer_"]) {
    (.editor__25bec), entao a fonte tem que descer por dentro dele */
 [class*="upperContainer_"] [class*="searchBar_"] [class*="editor__"],
 [class*="upperContainer_"] [class*="searchBar_"] [class*="editor__"] * {
-    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     line-height: 18px !important;
     color: #000000 !important;
 }
@@ -2263,7 +2266,7 @@ section:has(> [class*="upperContainer_"]) {
     border: 1px solid var(--xp-frame-dark) !important;
     border-radius: 3px !important;
     color: #000000 !important;
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     min-height: 23px !important;
     height: auto !important;
     box-shadow: none !important;
@@ -2335,7 +2338,7 @@ button[class*="button_"][class*="hasText_"] [class*="buttonChildrenWrapper_"] {
 }
 button[class*="button_"][class*="hasText_"] [class*="buttonChildren_"],
 button[class*="button_"][class*="hasText_"] [class*="buttonChildren_"] * {
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     line-height: 15px !important;
     color: #000000 !important;
 }
@@ -2363,7 +2366,7 @@ button[class*="button_"][class*="hasText_"]:active {
 }
 [class*="textButton__"] span,
 [class*="textButton__"] {
-    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 [class*="textButton__"]:hover {
@@ -2631,7 +2634,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
    uma aba muda no meio das outras */
 [class*="children__"] > [class*="shopHomeLink__"]::after {
     content: "Loja";
-    font: 700 12px Tahoma, 'Segoe UI', sans-serif;
+    font: 700 12px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif;
     color: #000000;
     margin-left: 6px;
 }
@@ -2644,7 +2647,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 /* titulo de secao vira cabecalho de grupo do XP: pequeno, azul,
    com a regua embaixo separando as faixas da pagina */
 [class*="shopViewWrapper"] h2 {
-    font: 700 12px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 12px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #0046d5 !important;
     letter-spacing: 0 !important;
     text-transform: none !important;
@@ -2654,7 +2657,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     margin-bottom: 8px !important;
 }
 [class*="shopViewWrapper"] h3 {
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 
@@ -2679,7 +2682,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 /* preco e nome do produto em Tahoma, na escala do resto do tema */
 [class*="shop__"] [class*="productCard"] [class*="name"],
 [class*="shop__"] [class*="productCard"] [class*="price"] {
-    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-family: Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
 }
 
 /* os banroes de destaque ("Bora la!", "Compre a Colecao") caem na
@@ -2748,11 +2751,11 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     border-radius: 0 !important;
     box-shadow: inset 1px 1px #7f7c6e !important;
     padding: 0 6px !important;
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 [class*="headerBar__"] [class*="toolbar_"] [class*="container_a3e8db"] * {
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 
@@ -2769,7 +2772,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 
@@ -2812,7 +2815,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 /* a aba de Missoes tambem so tinha o icone */
 [class*="children__"] > [class*="headerBarContent__"]::before {
     content: "Missões";
-    font: 700 12px Tahoma, 'Segoe UI', sans-serif;
+    font: 700 12px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif;
     color: #000000;
     white-space: nowrap;
 }
@@ -2856,7 +2859,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 
 /* os links da nav como botoes de toolbar do XP */
 [class*="navBarSectionContent__"] > * {
-    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
     border: 1px solid transparent !important;
     border-radius: 3px !important;
@@ -3155,7 +3158,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 }
 /* tempo decorrido em Tahoma, como o WMP */
 [class*="videoControlsCont_"] [class*="timestamp_"] {
-    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 
@@ -3235,7 +3238,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     align-items: center !important;
     gap: 5px !important;
     border-radius: 0 !important;
-    font: 400 12px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 400 12px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 [data-window-chrome="true"] > [class*="trailing_"] [class*="clickable__"]:hover {
@@ -3256,7 +3259,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
    do que o botao faz. */
 [data-window-chrome="true"] > [class*="trailing_"] [class*="clickable__"][aria-label]::after {
     content: attr(aria-label);
-    font: 400 12px Tahoma, 'Segoe UI', sans-serif;
+    font: 400 12px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif;
     white-space: nowrap;
 }
 /* o primeiro item comeca colado na borda, como no XP */
@@ -3474,7 +3477,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 [class*="tile_"] [class*="nameTag"] {
     color: #ffffff !important;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8) !important;
-    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    font: 700 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
 }
 [class*="tile_"] [class*="usernameFooter"],
 [class*="tile_"] [class*="nameTagContainer"],
