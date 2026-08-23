@@ -1,0 +1,3549 @@
+/**
+ * @name XP Luna
+ * @description Windows XP (Luna) skin for Discord. Built on refact0r's midnight engine, so it survives Discord class-hash changes.
+ * @author XP Luna skin over midnight by refact0r
+ * @version 3.0.0
+ * @website https://github.com/refact0r/midnight-discord
+ * @source https://github.com/refact0r/midnight-discord/blob/master/themes/midnight.theme.css
+*/
+
+/*
+ * === POR QUE ESTE ARQUIVO EXISTE ===
+ * O Exponent.theme.css importa xp.min.css, que usa nomes de classe FIXOS
+ * do Discord (.bg_d4b6c5, .appMount_ea7e65, .container_a4d4d9 ...).
+ * O Discord regenera esses hashes a cada build. Comparando o CSS do Exponent
+ * com o do midnight: 75 componentes em comum, 0 hashes iguais.
+ * Ou seja, nenhum seletor do Exponent casa mais com nada. Por isso ele quebrou.
+ *
+ * Este tema resolve isso de duas formas:
+ *  1. Usa o midnight como motor. Ele e mantido e atualizado pelo refact0r,
+ *     entao os hashes sao problema dele, nao seu.
+ *     (tentei usar o system24 como base pra reaproveitar o "unrounding" dele,
+ *      mas as cores escuras dele ganhavam das minhas. faco o unrounding aqui.)
+ *  2. O que eu adiciono por cima usa seletor por substring ([class*="chat_"])
+ *     ou :has(), que continuam casando mesmo quando o hash muda.
+ *
+ * IMPORTANTE: desative o Exponent.theme.css antes de usar este.
+ * RECOMENDADO: Discord > Config > Aparencia > tema Claro (Luna e um tema claro).
+ */
+
+/* motor do tema (mantido pelo refact0r) */
+@import url('https://refact0r.github.io/midnight-discord/build/midnight.css');
+
+body {
+    /* fontes: Tahoma e a fonte de UI do XP, Lucida Console e o console */
+    --font: 'Tahoma';
+    --code-font: 'Lucida Console';
+    font-weight: 400;
+
+    /* tamanhos */
+    --gap: 8px; /* espaco entre as "janelas" */
+    --divider-thickness: 2px;
+    --border-thickness: 1px;
+
+    /* animacoes */
+    --animations: off; /* XP nao desliza item de lista no hover */
+    --list-item-transition: 0.1s ease;
+    --dms-icon-svg-transition: 0.2s ease;
+    --border-hover-transition: 0.1s ease;
+
+    /* barra de titulo: 24px azul Luna, titulo a esquerda (estilo janela XP) */
+    --top-bar-height: 46px; /* 24px de titulo + 22px de barra de menu */
+    --top-bar-button-position: off;
+    --top-bar-title-position: left;
+    --subtle-top-bar-title: off;
+
+    /* controles de janela: usa os nativos, eu estilizo eles mais abaixo */
+    --custom-window-controls: off;
+    --window-control-size: 14px;
+
+    /* botao de DMs */
+    --custom-dms-icon: off;
+    --dms-icon-svg-url: url('');
+    --dms-icon-svg-size: 90%;
+    --dms-icon-color-before: var(--icon-subtle);
+    --dms-icon-color-after: var(--white);
+    --custom-dms-background: off;
+    --dms-background-image-url: url('');
+    --dms-background-image-size: cover;
+    --dms-background-color: linear-gradient(70deg, var(--blue-2), var(--purple-2), var(--red-2));
+
+    /* papel de parede Bliss atras dos paineis.
+       coloque --background-image: off se preferir o azul liso do desktop */
+    --background-image: off;
+    --background-image-url: url('https://saltssaumure.github.io/xp-discord-theme/img/bliss.avif');
+
+    /* transparencia/blur: desligado, XP e opaco */
+    --transparency-tweaks: off;
+    --remove-bg-layer: off;
+    --panel-blur: off;
+    --blur-amount: 12px;
+    --bg-floating: var(--xp-face);
+
+    /* chatbar separada: vira uma "janelinha" propria, bem XP */
+    --custom-chatbar: off; /* input colado no chat, sem painel separado */
+    --chatbar-height: 56px;
+
+    /* painel do usuario compacto */
+    --small-user-panel: off; /* o compacto espremia o nome ate virar "L a" */
+
+    /* cantos retos: janela XP nao tem canto arredondado */
+    --radius-xs: 0px;
+    --radius-sm: 0px;
+    --radius-md: 0px;
+    --radius-lg: 0px;
+    --radius-xl: 0px;
+}
+
+/* ============================================================
+   PALETA LUNA
+   ============================================================ */
+:root {
+    --colors: on;
+
+    /* cores cruas do Windows XP Luna */
+    --xp-face:        #ece9d8; /* cinza das janelas / botoes */
+    --xp-face-dark:   #d8d0c4; /* botao pressionado */
+    --xp-light:       #ffffff; /* luz do biselado 3D */
+    --xp-shadow:      #aca899; /* sombra do biselado 3D */
+    --xp-dark:        #716f64; /* sombra escura */
+    --xp-frame-blue:  #0831d9; /* borda azul da janela */
+    --xp-frame-dark:  #003c74; /* borda de botao */
+    --xp-select:      #316ac5; /* azul de selecao */
+    --xp-desktop:     #3a6ea5; /* azul do desktop classico */
+
+    /* texto (tema claro: texto escuro) */
+    --text-0: #ffffff; /* texto sobre elementos coloridos */
+    --text-1: #000000; /* texto forte */
+    --text-2: #10254f; /* titulos */
+    --text-3: #1a1a1a; /* texto normal */
+    --text-4: #4a4a4a; /* icones e canais */
+    --text-5: #7c7a70; /* canais mudos e timestamps */
+
+    /* fundos */
+    --bg-1: var(--xp-face-dark); /* botao clicado */
+    --bg-2: var(--xp-face);      /* botao */
+    --bg-3: var(--xp-face);      /* paineis secundarios e flutuantes */
+    --bg-4: #ffffff;             /* fundo principal, branco tipo documento */
+    --hover: hsla(217, 60%, 48%, 0.14);
+    --active: hsla(217, 60%, 48%, 0.28);
+    --active-2: hsla(217, 60%, 48%, 0.38);
+    --message-hover: hsla(217, 60%, 48%, 0.05);
+
+    /* acento: azul Luna */
+    --accent-1: #0831d9;
+    --accent-2: #0055e5;
+    --accent-3: #0f63e8;
+    --accent-4: #0a55c8;
+    --accent-5: #003dd7;
+    --accent-new: #0055e5;
+    --mention: linear-gradient(to right, hsla(217, 100%, 45%, 0.14) 40%, transparent);
+    --mention-hover: linear-gradient(to right, hsla(217, 100%, 45%, 0.07) 40%, transparent);
+    --reply: linear-gradient(to right, hsla(0, 0%, 40%, 0.14) 40%, transparent);
+    --reply-hover: linear-gradient(to right, hsla(0, 0%, 40%, 0.07) 40%, transparent);
+
+    /* status */
+    --online: #3c9f3c;    /* verde do botao Iniciar */
+    --dnd: #c73207;       /* vermelho do botao Fechar */
+    --idle: #e8a200;
+    --streaming: #7b4fbf;
+    --offline: var(--xp-shadow);
+
+    /* bordas */
+    --border-light: #d4d0c8;
+    --border: var(--xp-shadow);
+    --border-hover: var(--xp-shadow); /* nada de borda azul ao passar o mouse */
+    --button-border: var(--xp-frame-dark);
+}
+
+/* ============================================================
+   CAMADA XP
+   tudo aqui usa seletor por substring ou :has(), entao nao quebra
+   quando o Discord troca os hashes das classes
+   ============================================================ */
+
+/* deixa a moldura do app transparente pro Bliss aparecer nos espacos.
+   mesma especificidade do bloco do midnight, e vem depois, entao ganha */
+body,
+.theme-dark:not(.custom-user-profile-theme),
+.theme-light:not(.custom-user-profile-theme) {
+    --app-frame-background: transparent;
+
+    /* chat branco tipo documento, o resto cor de janela */
+    --chat-background-default: #ffffff;
+
+    /* paineis flutuantes, modais e menus continuam opacos cor de janela */
+    --background-surface-high: var(--xp-face);
+    --background-surface-higher: var(--xp-face);
+    --background-surface-highest: var(--xp-face);
+    --bg-surface-raised: var(--xp-face);
+    --modal-background: var(--xp-face);
+
+    /* barra de rolagem XP */
+    --scrollbar-auto-thumb: var(--xp-face);
+    --scrollbar-auto-track: #f1efe2;
+    --scrollbar-auto-scrollbar-color-thumb: var(--xp-face);
+    --scrollbar-auto-scrollbar-color-track: #f1efe2;
+    --scrollbar-thin-thumb: var(--xp-face);
+    --scrollbar-thin-track: transparent;
+}
+
+/* --- PAPEL DE PAREDE ---
+   conferido no CSS que o Discord serve hoje:
+     .bg__960e4  { background: var(--background-gradient-app-frame, ...); inset: 0 }
+     .app__160d8 { background-color: var(--background-base-lowest); inset: 0 }
+   o .app_ fica POR CIMA do .bg_ e e ele que tapava o Bliss. mexer no token
+   --background-base-lowest nao servia porque ele tambem pinta o interior dos
+   paineis (deixava tudo transparente). a correcao e so no .app_ mesmo.
+   os dois substrings sao seguros: "bg_" so casa com .bg__960e4, e "app_"
+   so casa com .app__160d8 e .app_a3002d (os dois containers do frame). */
+#app-mount div[class*="bg_"],
+#app-mount [class*="app_"] {
+    /* cor de fundo padrao do Windows: rgb(236, 233, 216) */
+    background: var(--xp-face) !important;
+}
+/* sem bordas internas nos paineis: a moldura e so a de fora */
+[class*="guilds_"],
+[class*="sidebarList_"],
+[class*="chat_"],
+[class*="membersWrap_"] {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* a moldura azul e da JANELA inteira (header + conteudo), nunca dos paineis
+   internos. tem que ser border e nao box-shadow inset: o .app_ e
+   position:absolute com inset:0 e os filhos preenchem a caixa toda,
+   entao uma sombra interna fica escondida embaixo deles. a borda
+   reserva espaco de verdade. tom mais claro em cima/esquerda e mais
+   escuro embaixo/direita, como a moldura do Luna. */
+#app-mount [class*="app_"] {
+    border: 3px solid !important;
+    /* sem borda em cima: a barra de titulo azul JA e o topo da janela,
+       uma linha ali vira emenda em cima do header do app */
+    border-top: 0 !important;
+    border-color: #0831d9 #001ea0 #001ea0 #0831d9 !important;
+    box-sizing: border-box !important;
+}
+
+/* --- BARRA DE TITULO EM DUAS FAIXAS ---
+   faixa de cima  (24px, azul Luna): icone + "Discord" + controles de janela
+   faixa de baixo (22px, cinza XP) : barra de menu com as acoes realocadas
+                                     (caixa de entrada, ajuda, suporte)
+   identifico a barra pelo fato de conter os botoes de janela, nao pelo hash.
+   estrutura conferida no midnight: bar_ > trailing_ > [acoes..., winButtons_]
+   ============================================================ */
+[data-window-chrome="true"] {
+    position: relative !important;
+    height: var(--top-bar-height) !important;
+    background:
+        linear-gradient(
+            180deg,
+            #0997ff 0%,
+            #0053ee 8%,
+            #0050ee 40%,
+            #0066ff 88%,
+            #0066ff 93%,
+            #005bff 95%,
+            #003dd7 96%,
+            #003dd7 100%
+        ) top / 100% 24px no-repeat,
+        var(--xp-face) !important;
+    border-bottom: 1px solid var(--xp-shadow) !important;
+}
+[class*="titleBar_"] /* titlebar do popout de chamada, continua faixa unica */ {
+    background: linear-gradient(
+        180deg,
+        #0997ff 0%,
+        #0053ee 8%,
+        #0050ee 40%,
+        #0066ff 88%,
+        #0066ff 93%,
+        #005bff 95%,
+        #003dd7 96%,
+        #003dd7 100%
+    ) !important;
+    border-bottom: 1px solid #001ea0;
+}
+
+/* titulo preso na faixa azul de cima */
+[data-window-chrome="true"] [class*="title_"],
+[class*="titleBar_"] [class*="title_"] {
+    color: #ffffff !important;
+    font-weight: 700;
+    text-shadow: 1px 1px #0f1089;
+    letter-spacing: 0;
+}
+[data-window-chrome="true"] [class*="title_"] {
+    position: absolute !important;
+    top: 0;
+    left: 6px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+}
+
+/* a faixa de menu: desce o trailing_ inteiro e alinha a esquerda */
+[data-window-chrome="true"] > [class*="trailing_"] {
+    position: absolute !important;
+    top: 24px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 22px !important;
+    justify-content: flex-start !important;
+    align-items: center;
+    gap: 2px !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+/* rotulos decorativos de menu do XP, antes das acoes de verdade */
+[data-window-chrome="true"] > [class*="trailing_"]::before {
+    content: 'Arquivo    Editar    Exibir    Favoritos    Ferramentas';
+    font: 400 12px Tahoma, sans-serif;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    padding: 0 10px 0 8px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+/* os controles de janela sobem de volta pra faixa azul */
+[data-window-chrome="true"] > [class*="trailing_"] > [class*="winButtons_"] {
+    position: absolute !important;
+    top: -24px !important;
+    right: 2px !important;
+    height: 22px !important;
+    padding: 0 !important;
+}
+
+/* icones: brancos na faixa azul, escuros na faixa de menu */
+[data-window-chrome="true"] svg {
+    color: #ffffff;
+}
+[data-window-chrome="true"] > [class*="trailing_"] svg {
+    color: #000000 !important;
+}
+
+/* botoes de janela: fechar vermelho como no XP */
+[class*="winButton_"] {
+    color: #ffffff;
+}
+[class*="winButton_"]:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+[class*="winButtonClose_"]:hover {
+    background-color: #e04343;
+}
+
+/* --- CHAMADA DE VOZ/VIDEO ---
+   por padrao fica preto puro, que destoa. vira janela cor de XP. */
+[class*="callContainer_"] {
+    background: var(--xp-face);
+    box-shadow:
+        inset 1px 1px var(--xp-shadow),
+        inset -1px -1px var(--xp-light);
+}
+
+/* rolagem com biselado 3D */
+::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--xp-face);
+    border: 1px solid var(--xp-shadow);
+    border-radius: 0;
+    box-shadow:
+        inset 1px 1px var(--xp-light),
+        inset -1px -1px var(--xp-shadow);
+}
+::-webkit-scrollbar-track {
+    background: #f1efe2;
+}
+
+/* selecao de texto azul XP */
+::selection {
+    background: var(--xp-select);
+    color: #ffffff;
+}
+
+/* campos de entrada afundados, como no XP */
+input[class*="input_"],
+[class*="searchBar_"] {
+    border-radius: 0;
+    box-shadow:
+        inset 1px 1px var(--xp-shadow),
+        inset -1px -1px var(--xp-light);
+}
+
+/* botoes com o 3D do XP (gradiente + borda + brilho ambar no hover) */
+[class*="lookFilled_"] {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    color: #000000 !important;
+}
+[class*="lookFilled_"]:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+[class*="lookFilled_"]:active {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+}
+
+/* ============================================================
+   QUADRAR TUDO (estilo XP / MSN)
+   o XP nao tem canto redondo em lugar nenhum.
+   ============================================================ */
+
+/* nada de canto arredondado em nenhum elemento */
+*,
+*::before,
+*::after {
+    border-radius: 0 !important;
+}
+
+/* fotos de perfil e icones de servidor sao circulos feitos com mascara SVG,
+   entao border-radius sozinho nao resolve. tirando a mascara, ficam quadrados. */
+foreignObject {
+    /* o circulo do avatar vem de mask="url(#svg-mask-avatar-*)" no
+       foreignObject; border-radius sozinho nao resolve.
+       ATENCAO: se voltar a ligar o RadialStatus, remova este mask:none -
+       e com essa mesma mascara que ele recorta o anel de presenca. */
+    mask: none !important;
+    clip-path: none !important;
+}
+
+/* as molduras decorativas de perfil so encaixam em pfp redonda, entao saem */
+[class*="avatarDecoration"] {
+    display: none !important;
+}
+
+/* ============================================================
+   BOTOES DE JANELA DO XP
+   SVGs pixel-perfect do XP.css (MIT), embutidos como data URI:
+   nao fazem request nenhum. a ordem dentro de winButtons_ e
+   minimizar, maximizar, fechar.
+   ============================================================ */
+[class*="winButtons_"] [class*="winButton_"] {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    width: 21px;
+    height: 21px;
+    padding: 0;
+}
+[class*="winButtons_"] [class*="winButton_"] svg { display: none !important; }
+[class*="winButtons_"] [class*="winButton_"]:hover { background-color: transparent !important; }
+
+[class*="winButtons_"] > [class*="winButton_"]:nth-of-type(1) {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -0.5 21 21' shape-rendering='crispEdges'%3E%3Cpath stroke='%236696eb' d='M1 0h1m17 0h1'/%3E%3Cpath stroke='%23e5edfb' d='M2 0h1'/%3E%3Cpath stroke='%23fff' d='M3 0h16M0 2h1M0 3h1m19 0h1M0 4h1m19 0h1M0 5h1m19 0h1M0 6h1m19 0h1M0 7h1m19 0h1M0 8h1m19 0h1M0 9h1m19 0h1M0 10h1m19 0h1M0 11h1m19 0h1M0 12h1m19 0h1M0 13h1m4 0h7m8 0h1M0 14h1m4 0h7m8 0h1M0 15h1m4 0h7m8 0h1M0 16h1m19 0h1M0 17h1m19 0h1m-1 1h1M2 20h16'/%3E%3Cpath stroke='%236693e9' d='M0 1h1m19 0h1'/%3E%3Cpath stroke='%23dce5fd' d='M1 1h1'/%3E%3Cpath stroke='%23739af8' d='M2 1h1'/%3E%3Cpath stroke='%23608cf7' d='M3 1h1M2 8h1'/%3E%3Cpath stroke='%235584f6' d='M4 1h1'/%3E%3Cpath stroke='%234d7ef6' d='M5 1h1M1 6h1m5 4h1'/%3E%3Cpath stroke='%23487af5' d='M6 1h1'/%3E%3Cpath stroke='%234276f5' d='M7 1h1M3 14h1'/%3E%3Cpath stroke='%234478f5' d='M8 1h1m5 3h1M2 12h1'/%3E%3Cpath stroke='%233e73f5' d='M9 1h2'/%3E%3Cpath stroke='%233b71f5' d='M11 1h2'/%3E%3Cpath stroke='%23336cf4' d='M13 1h2'/%3E%3Cpath stroke='%23306af4' d='M15 1h1'/%3E%3Cpath stroke='%232864f4' d='M16 1h1'/%3E%3Cpath stroke='%231f5def' d='M17 1h1'/%3E%3Cpath stroke='%233467e0' d='M18 1h1'/%3E%3Cpath stroke='%23d2dbf2' d='M19 1h1'/%3E%3Cpath stroke='%23769cf8' d='M1 2h1'/%3E%3Cpath stroke='%2390aff9' d='M2 2h1'/%3E%3Cpath stroke='%2394b2f9' d='M3 2h1'/%3E%3Cpath stroke='%2385a7f8' d='M4 2h1'/%3E%3Cpath stroke='%23759cf8' d='M5 2h1'/%3E%3Cpath stroke='%236e97f8' d='M6 2h1M2 6h1'/%3E%3Cpath stroke='%236892f7' d='M7 2h1'/%3E%3Cpath stroke='%236690f7' d='M8 2h1'/%3E%3Cpath stroke='%23628ef7' d='M9 2h1m0 1h1'/%3E%3Cpath stroke='%235f8cf7' d='M10 2h1'/%3E%3Cpath stroke='%235e8bf7' d='M11 2h1'/%3E%3Cpath stroke='%235988f6' d='M12 2h1'/%3E%3Cpath stroke='%235685f6' d='M13 2h1'/%3E%3Cpath stroke='%235082f6' d='M14 2h1'/%3E%3Cpath stroke='%23497cf5' d='M15 2h1'/%3E%3Cpath stroke='%233f75f5' d='M16 2h1m-2 2h1'/%3E%3Cpath stroke='%23326bf2' d='M17 2h1'/%3E%3Cpath stroke='%23235ce3' d='M18 2h1'/%3E%3Cpath stroke='%23305cc5' d='M19 2h1'/%3E%3Cpath stroke='%23e5ecfb' d='M20 2h1'/%3E%3Cpath stroke='%236590f7' d='M1 3h1'/%3E%3Cpath stroke='%2397b4f9' d='M2 3h1'/%3E%3Cpath stroke='%239ab7fa' d='M3 3h1'/%3E%3Cpath stroke='%2389aaf9' d='M4 3h1M2 4h1'/%3E%3Cpath stroke='%237aa0f8' d='M5 3h1'/%3E%3Cpath stroke='%23729af8' d='M6 3h1'/%3E%3Cpath stroke='%236d95f8' d='M7 3h1'/%3E%3Cpath stroke='%236892f8' d='M8 3h1M2 7h1'/%3E%3Cpath stroke='%23658ff7' d='M9 3h1'/%3E%3Cpath stroke='%23618df7' d='M11 3h1'/%3E%3Cpath stroke='%235d8af7' d='M12 3h1M3 9h1'/%3E%3Cpath stroke='%235987f6' d='M13 3h1M2 9h1'/%3E%3Cpath stroke='%235283f6' d='M14 3h1'/%3E%3Cpath stroke='%234c7ef6' d='M15 3h1'/%3E%3Cpath stroke='%234377f5' d='M16 3h1'/%3E%3Cpath stroke='%23376ef2' d='M17 3h1'/%3E%3Cpath stroke='%23285fe3' d='M18 3h1'/%3E%3Cpath stroke='%231546b9' d='M19 3h1'/%3E%3Cpath stroke='%235886f6' d='M1 4h1'/%3E%3Cpath stroke='%238dadf9' d='M3 4h1'/%3E%3Cpath stroke='%237fa3f8' d='M4 4h1'/%3E%3Cpath stroke='%237199f8' d='M5 4h1M4 5h1'/%3E%3Cpath stroke='%236a93f8' d='M6 4h1M4 6h1M3 7h1'/%3E%3Cpath stroke='%23648ef7' d='M7 4h1'/%3E%3Cpath stroke='%235e8af7' d='M8 4h1'/%3E%3Cpath stroke='%235986f7' d='M9 4h1M5 9h1m-2 1h1'/%3E%3Cpath stroke='%235482f6' d='M10 4h1'/%3E%3Cpath stroke='%235180f6' d='M11 4h1'/%3E%3Cpath stroke='%234b7cf5' d='M12 4h1'/%3E%3Cpath stroke='%234a7cf5' d='M13 4h1'/%3E%3Cpath stroke='%233a72f4' d='M16 4h1'/%3E%3Cpath stroke='%23346cf2' d='M17 4h1'/%3E%3Cpath stroke='%232a61e3' d='M18 4h1'/%3E%3Cpath stroke='%231848bb' d='M19 4h1'/%3E%3Cpath stroke='%235282f6' d='M1 5h1m4 6h1m-3 1h1'/%3E%3Cpath stroke='%23799ff8' d='M2 5h1'/%3E%3Cpath stroke='%237ca1f8' d='M3 5h1'/%3E%3Cpath stroke='%236791f8' d='M5 5h1'/%3E%3Cpath stroke='%23608bf7' d='M6 5h1M4 8h1'/%3E%3Cpath stroke='%235985f7' d='M7 5h1'/%3E%3Cpath stroke='%235381f6' d='M8 5h1M6 9h1'/%3E%3Cpath stroke='%234d7bf6' d='M9 5h1M8 6h1'/%3E%3Cpath stroke='%234677f5' d='M10 5h1'/%3E%3Cpath stroke='%234173f5' d='M11 5h1'/%3E%3Cpath stroke='%233a6ff4' d='M12 5h1'/%3E%3Cpath stroke='%23386ef4' d='M13 5h1'/%3E%3Cpath stroke='%23346cf4' d='M14 5h1'/%3E%3Cpath stroke='%23326cf4' d='M15 5h1'/%3E%3Cpath stroke='%23316bf4' d='M16 5h1M3 16h1'/%3E%3Cpath stroke='%233069f1' d='M17 5h1'/%3E%3Cpath stroke='%232c62e4' d='M18 5h1'/%3E%3Cpath stroke='%231d4cbc' d='M19 5h1m-1 1h1'/%3E%3Cpath stroke='%237099f8' d='M3 6h1'/%3E%3Cpath stroke='%23628cf8' d='M5 6h1'/%3E%3Cpath stroke='%235b86f7' d='M6 6h1'/%3E%3Cpath stroke='%235480f7' d='M7 6h1'/%3E%3Cpath stroke='%234777f6' d='M9 6h1'/%3E%3Cpath stroke='%234072f5' d='M10 6h1'/%3E%3Cpath stroke='%233a6ff5' d='M11 6h1'/%3E%3Cpath stroke='%23346df4' d='M12 6h1'/%3E%3Cpath stroke='%23306bf4' d='M13 6h1'/%3E%3Cpath stroke='%232d69f4' d='M14 6h1'/%3E%3Cpath stroke='%232c69f5' d='M15 6h1'/%3E%3Cpath stroke='%232d69f5' d='M16 6h1'/%3E%3Cpath stroke='%232e69f2' d='M17 6h1'/%3E%3Cpath stroke='%232c63e5' d='M18 6h1'/%3E%3Cpath stroke='%234679f5' d='M1 7h1M1 8h1'/%3E%3Cpath stroke='%23658ff8' d='M4 7h1'/%3E%3Cpath stroke='%235e89f7' d='M5 7h1'/%3E%3Cpath stroke='%235783f7' d='M6 7h1'/%3E%3Cpath stroke='%23507ef6' d='M7 7h1'/%3E%3Cpath stroke='%234a79f6' d='M8 7h1'/%3E%3Cpath stroke='%234375f5' d='M9 7h1'/%3E%3Cpath stroke='%233d71f5' d='M10 7h1'/%3E%3Cpath stroke='%23366ef4' d='M11 7h1M2 14h1'/%3E%3Cpath stroke='%232f6bf5' d='M12 7h1'/%3E%3Cpath stroke='%232b69f5' d='M13 7h1'/%3E%3Cpath stroke='%232867f5' d='M14 7h1'/%3E%3Cpath stroke='%232766f5' d='M15 7h1'/%3E%3Cpath stroke='%232a68f5' d='M16 7h1'/%3E%3Cpath stroke='%232c69f2' d='M17 7h1'/%3E%3Cpath stroke='%232a62e4' d='M18 7h1'/%3E%3Cpath stroke='%231c4cbd' d='M19 7h1'/%3E%3Cpath stroke='%23628df8' d='M3 8h1'/%3E%3Cpath stroke='%235b87f7' d='M5 8h1'/%3E%3Cpath stroke='%235482f7' d='M6 8h1'/%3E%3Cpath stroke='%234e7cf6' d='M7 8h1'/%3E%3Cpath stroke='%234778f6' d='M8 8h1'/%3E%3Cpath stroke='%234174f5' d='M9 8h1'/%3E%3Cpath stroke='%233a71f5' d='M10 8h1'/%3E%3Cpath stroke='%23346ef4' d='M11 8h1'/%3E%3Cpath stroke='%232d6bf5' d='M12 8h1'/%3E%3Cpath stroke='%232869f5' d='M13 8h1'/%3E%3Cpath stroke='%232467f5' d='M14 8h1'/%3E%3Cpath stroke='%232266f5' d='M15 8h1'/%3E%3Cpath stroke='%232567f5' d='M16 8h1'/%3E%3Cpath stroke='%232968f2' d='M17 8h1'/%3E%3Cpath stroke='%232963e4' d='M18 8h1'/%3E%3Cpath stroke='%231b4bbd' d='M19 8h1'/%3E%3Cpath stroke='%233c72f4' d='M1 9h1'/%3E%3Cpath stroke='%235d89f7' d='M4 9h1'/%3E%3Cpath stroke='%234e7ef6' d='M7 9h1'/%3E%3Cpath stroke='%23477af5' d='M8 9h1'/%3E%3Cpath stroke='%234178f5' d='M9 9h1'/%3E%3Cpath stroke='%233a74f5' d='M10 9h1'/%3E%3Cpath stroke='%233472f5' d='M11 9h1'/%3E%3Cpath stroke='%232c6ff5' d='M12 9h1'/%3E%3Cpath stroke='%23276cf5' d='M13 9h1'/%3E%3Cpath stroke='%23236af6' d='M14 9h1'/%3E%3Cpath stroke='%232069f6' d='M15 9h1'/%3E%3Cpath stroke='%232268f5' d='M16 9h1'/%3E%3Cpath stroke='%232569f2' d='M17 9h1'/%3E%3Cpath stroke='%232562e6' d='M18 9h1'/%3E%3Cpath stroke='%23194bbe' d='M19 9h1'/%3E%3Cpath stroke='%23376ef4' d='M1 10h1'/%3E%3Cpath stroke='%235181f6' d='M2 10h1'/%3E%3Cpath stroke='%235785f7' d='M3 10h1m1 0h1'/%3E%3Cpath stroke='%235281f6' d='M6 10h1'/%3E%3Cpath stroke='%23477bf6' d='M8 10h1'/%3E%3Cpath stroke='%234179f6' d='M9 10h1'/%3E%3Cpath stroke='%233b77f5' d='M10 10h1'/%3E%3Cpath stroke='%233474f5' d='M11 10h1'/%3E%3Cpath stroke='%232c72f6' d='M12 10h1'/%3E%3Cpath stroke='%23266ff6' d='M13 10h1'/%3E%3Cpath stroke='%23226df6' d='M14 10h1'/%3E%3Cpath stroke='%231e6bf6' d='M15 10h1'/%3E%3Cpath stroke='%231f6af6' d='M16 10h1'/%3E%3Cpath stroke='%23216af3' d='M17 10h1'/%3E%3Cpath stroke='%232162e6' d='M18 10h1'/%3E%3Cpath stroke='%231649be' d='M19 10h1'/%3E%3Cpath stroke='%23326bf4' d='M1 11h1'/%3E%3Cpath stroke='%234b7df5' d='M2 11h1'/%3E%3Cpath stroke='%235483f6' d='M3 11h1'/%3E%3Cpath stroke='%235684f7' d='M4 11h1'/%3E%3Cpath stroke='%235583f7' d='M5 11h1'/%3E%3Cpath stroke='%234d80f6' d='M7 11h1'/%3E%3Cpath stroke='%23487df6' d='M8 11h1'/%3E%3Cpath stroke='%23427cf6' d='M9 11h1'/%3E%3Cpath stroke='%233c7af6' d='M10 11h1'/%3E%3Cpath stroke='%233478f6' d='M11 11h1'/%3E%3Cpath stroke='%232d76f6' d='M12 11h1'/%3E%3Cpath stroke='%232673f7' d='M13 11h1'/%3E%3Cpath stroke='%232171f7' d='M14 11h1'/%3E%3Cpath stroke='%231c6ff6' d='M15 11h1'/%3E%3Cpath stroke='%231c6df6' d='M16 11h1'/%3E%3Cpath stroke='%231c6af4' d='M17 11h1'/%3E%3Cpath stroke='%231c61e6' d='M18 11h1'/%3E%3Cpath stroke='%231248bf' d='M19 11h1'/%3E%3Cpath stroke='%232b66f4' d='M1 12h1'/%3E%3Cpath stroke='%234e7ff6' d='M3 12h1'/%3E%3Cpath stroke='%235383f6' d='M5 12h1'/%3E%3Cpath stroke='%235182f6' d='M6 12h1'/%3E%3Cpath stroke='%234d81f7' d='M7 12h1'/%3E%3Cpath stroke='%23487ff6' d='M8 12h1'/%3E%3Cpath stroke='%23437ff6' d='M9 12h1'/%3E%3Cpath stroke='%233d7ef6' d='M10 12h1'/%3E%3Cpath stroke='%23357cf6' d='M11 12h1'/%3E%3Cpath stroke='%232d7af7' d='M12 12h1'/%3E%3Cpath stroke='%232677f7' d='M13 12h1'/%3E%3Cpath stroke='%232174f7' d='M14 12h1'/%3E%3Cpath stroke='%231b71f7' d='M15 12h1'/%3E%3Cpath stroke='%23186ef7' d='M16 12h1'/%3E%3Cpath stroke='%23186af4' d='M17 12h1'/%3E%3Cpath stroke='%23165fe7' d='M18 12h1'/%3E%3Cpath stroke='%230f47c0' d='M19 12h1'/%3E%3Cpath stroke='%232562f3' d='M1 13h1'/%3E%3Cpath stroke='%233d73f4' d='M2 13h1'/%3E%3Cpath stroke='%23487bf5' d='M3 13h1'/%3E%3Cpath stroke='%234e80f6' d='M4 13h1'/%3E%3Cpath stroke='%232d7cf7' d='M12 13h1'/%3E%3Cpath stroke='%232679f8' d='M13 13h1'/%3E%3Cpath stroke='%232077f7' d='M14 13h1'/%3E%3Cpath stroke='%231973f7' d='M15 13h1'/%3E%3Cpath stroke='%23166ff7' d='M16 13h1'/%3E%3Cpath stroke='%231369f4' d='M17 13h1'/%3E%3Cpath stroke='%23105de8' d='M18 13h1'/%3E%3Cpath stroke='%230a44bf' d='M19 13h1'/%3E%3Cpath stroke='%231e5df3' d='M1 14h1'/%3E%3Cpath stroke='%23497bf5' d='M4 14h1'/%3E%3Cpath stroke='%232d7df7' d='M12 14h1'/%3E%3Cpath stroke='%23257af8' d='M13 14h1'/%3E%3Cpath stroke='%231e77f8' d='M14 14h1'/%3E%3Cpath stroke='%231773f8' d='M15 14h1'/%3E%3Cpath stroke='%23116df7' d='M16 14h1'/%3E%3Cpath stroke='%230d66f4' d='M17 14h1m-3 3h1'/%3E%3Cpath stroke='%230b59e7' d='M18 14h1'/%3E%3Cpath stroke='%230641c0' d='M19 14h1m-6 5h1'/%3E%3Cpath stroke='%231859f3' d='M1 15h1'/%3E%3Cpath stroke='%232e68f4' d='M2 15h1'/%3E%3Cpath stroke='%233a71f4' d='M3 15h1'/%3E%3Cpath stroke='%234277f5' d='M4 15h1'/%3E%3Cpath stroke='%232a7cf8' d='M12 15h1'/%3E%3Cpath stroke='%23247af8' d='M13 15h1'/%3E%3Cpath stroke='%231d77f8' d='M14 15h1'/%3E%3Cpath stroke='%231573f8' d='M15 15h1'/%3E%3Cpath stroke='%230e6cf8' d='M16 15h1'/%3E%3Cpath stroke='%230963f4' d='M17 15h1'/%3E%3Cpath stroke='%230556e7' d='M18 15h1'/%3E%3Cpath stroke='%23023fbf' d='M19 15h1'/%3E%3Cpath stroke='%231456f3' d='M1 16h1'/%3E%3Cpath stroke='%232562f4' d='M2 16h1'/%3E%3Cpath stroke='%233971f4' d='M4 16h1'/%3E%3Cpath stroke='%233d74f5' d='M5 16h1'/%3E%3Cpath stroke='%233d74f6' d='M6 16h1'/%3E%3Cpath stroke='%233b75f5' d='M7 16h1'/%3E%3Cpath stroke='%233976f5' d='M8 16h1'/%3E%3Cpath stroke='%233777f5' d='M9 16h1'/%3E%3Cpath stroke='%233278f6' d='M10 16h1'/%3E%3Cpath stroke='%232c78f7' d='M11 16h1'/%3E%3Cpath stroke='%232577f7' d='M12 16h1'/%3E%3Cpath stroke='%231f76f7' d='M13 16h1'/%3E%3Cpath stroke='%231972f7' d='M14 16h1'/%3E%3Cpath stroke='%23116ef8' d='M15 16h1'/%3E%3Cpath stroke='%230b68f7' d='M16 16h1'/%3E%3Cpath stroke='%230560f4' d='M17 16h1'/%3E%3Cpath stroke='%230253e6' d='M18 16h1'/%3E%3Cpath stroke='%23013dbe' d='M19 16h1'/%3E%3Cpath stroke='%230e50ed' d='M1 17h1'/%3E%3Cpath stroke='%231c5bef' d='M2 17h1'/%3E%3Cpath stroke='%232863f0' d='M3 17h1'/%3E%3Cpath stroke='%232f68f0' d='M4 17h1'/%3E%3Cpath stroke='%23336bf1' d='M5 17h1'/%3E%3Cpath stroke='%23346cf1' d='M6 17h1'/%3E%3Cpath stroke='%23316cf2' d='M7 17h1'/%3E%3Cpath stroke='%23316df2' d='M8 17h1'/%3E%3Cpath stroke='%232e6ff2' d='M9 17h1'/%3E%3Cpath stroke='%232a70f2' d='M10 17h1'/%3E%3Cpath stroke='%232570f3' d='M11 17h1'/%3E%3Cpath stroke='%231f6ff3' d='M12 17h1'/%3E%3Cpath stroke='%23196df4' d='M13 17h1'/%3E%3Cpath stroke='%23136af4' d='M14 17h1'/%3E%3Cpath stroke='%230760f3' d='M16 17h1'/%3E%3Cpath stroke='%23025af0' d='M17 17h1'/%3E%3Cpath stroke='%23004de2' d='M18 17h1'/%3E%3Cpath stroke='%23003ab9' d='M19 17h1'/%3E%3Cpath stroke='%23e5eefd' d='M0 18h1'/%3E%3Cpath stroke='%23285edf' d='M1 18h1'/%3E%3Cpath stroke='%23134fdf' d='M2 18h1'/%3E%3Cpath stroke='%231b55df' d='M3 18h1'/%3E%3Cpath stroke='%23215ae2' d='M4 18h1'/%3E%3Cpath stroke='%23255ce1' d='M5 18h1'/%3E%3Cpath stroke='%23265de0' d='M6 18h1'/%3E%3Cpath stroke='%23245ce1' d='M7 18h1'/%3E%3Cpath stroke='%23235ee2' d='M8 18h1'/%3E%3Cpath stroke='%23215ee2' d='M9 18h1'/%3E%3Cpath stroke='%231e5ee2' d='M10 18h1'/%3E%3Cpath stroke='%231b5fe5' d='M11 18h1'/%3E%3Cpath stroke='%23165ee5' d='M12 18h1'/%3E%3Cpath stroke='%23135de6' d='M13 18h1'/%3E%3Cpath stroke='%230e5be5' d='M14 18h1'/%3E%3Cpath stroke='%230958e6' d='M15 18h1'/%3E%3Cpath stroke='%230454e6' d='M16 18h1'/%3E%3Cpath stroke='%23014ee2' d='M17 18h1'/%3E%3Cpath stroke='%230045d3' d='M18 18h1'/%3E%3Cpath stroke='%231f4eb8' d='M19 18h1'/%3E%3Cpath stroke='%23679ef6' d='M0 19h1m19 0h1'/%3E%3Cpath stroke='%23d0daf1' d='M1 19h1'/%3E%3Cpath stroke='%232856c3' d='M2 19h1'/%3E%3Cpath stroke='%230d3fb6' d='M3 19h1'/%3E%3Cpath stroke='%231144bd' d='M4 19h1'/%3E%3Cpath stroke='%231245bb' d='M5 19h1'/%3E%3Cpath stroke='%231445b9' d='M6 19h1'/%3E%3Cpath stroke='%231244b9' d='M7 19h1'/%3E%3Cpath stroke='%231345bc' d='M8 19h1'/%3E%3Cpath stroke='%231346bd' d='M9 19h1'/%3E%3Cpath stroke='%231045be' d='M10 19h1'/%3E%3Cpath stroke='%230d45c0' d='M11 19h1'/%3E%3Cpath stroke='%230a45c1' d='M12 19h1'/%3E%3Cpath stroke='%230844c3' d='M13 19h1'/%3E%3Cpath stroke='%23033fc0' d='M15 19h1'/%3E%3Cpath stroke='%23013fc3' d='M16 19h1'/%3E%3Cpath stroke='%23003bbe' d='M17 19h1'/%3E%3Cpath stroke='%231f4eb9' d='M18 19h1'/%3E%3Cpath stroke='%23cfd8ed' d='M19 19h1'/%3E%3Cpath stroke='%23669bf5' d='M1 20h1m17 0h1'/%3E%3Cpath stroke='%23e5edfd' d='M18 20h1'/%3E%3C/svg%3E");
+}
+[class*="winButtons_"] > [class*="winButton_"]:nth-of-type(2) {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -0.5 21 21' shape-rendering='crispEdges'%3E%3Cpath stroke='%236696eb' d='M1 0h1'/%3E%3Cpath stroke='%23e5edfb' d='M2 0h1'/%3E%3Cpath stroke='%23fff' d='M3 0h16M0 2h1M0 3h1m19 0h1M0 4h1m19 0h1M0 5h1m4 0h11m4 0h1M0 6h1m4 0h11m4 0h1M0 7h1m4 0h11m4 0h1M0 8h1m4 0h1m9 0h1m4 0h1M0 9h1m4 0h1m9 0h1m4 0h1M0 10h1m4 0h1m9 0h1m4 0h1M0 11h1m4 0h1m9 0h1m4 0h1M0 12h1m4 0h1m9 0h1m4 0h1M0 13h1m4 0h1m9 0h1m4 0h1M0 14h1m4 0h1m9 0h1m4 0h1M0 15h1m4 0h11m4 0h1M0 16h1m19 0h1M0 17h1m19 0h1m-1 1h1M2 20h16'/%3E%3Cpath stroke='%236694eb' d='M19 0h1'/%3E%3Cpath stroke='%236693e9' d='M0 1h1m19 0h1'/%3E%3Cpath stroke='%23dce5fd' d='M1 1h1'/%3E%3Cpath stroke='%23739af8' d='M2 1h1'/%3E%3Cpath stroke='%23608cf7' d='M3 1h1M2 8h1'/%3E%3Cpath stroke='%235584f6' d='M4 1h1'/%3E%3Cpath stroke='%234d7ef6' d='M5 1h1M1 6h1m5 4h1'/%3E%3Cpath stroke='%23487af5' d='M6 1h1'/%3E%3Cpath stroke='%234276f5' d='M7 1h1M3 14h1'/%3E%3Cpath stroke='%234478f5' d='M8 1h1m5 3h1M2 12h1'/%3E%3Cpath stroke='%233e73f5' d='M9 1h2'/%3E%3Cpath stroke='%233b71f5' d='M11 1h2'/%3E%3Cpath stroke='%23336cf4' d='M13 1h2'/%3E%3Cpath stroke='%23306af4' d='M15 1h1'/%3E%3Cpath stroke='%232864f4' d='M16 1h1'/%3E%3Cpath stroke='%231f5def' d='M17 1h1'/%3E%3Cpath stroke='%233467e0' d='M18 1h1'/%3E%3Cpath stroke='%23d2dbf2' d='M19 1h1'/%3E%3Cpath stroke='%23769cf8' d='M1 2h1'/%3E%3Cpath stroke='%2390aff9' d='M2 2h1'/%3E%3Cpath stroke='%2394b2f9' d='M3 2h1'/%3E%3Cpath stroke='%2385a7f8' d='M4 2h1'/%3E%3Cpath stroke='%23759cf8' d='M5 2h1'/%3E%3Cpath stroke='%236e97f8' d='M6 2h1M2 6h1'/%3E%3Cpath stroke='%236892f7' d='M7 2h1'/%3E%3Cpath stroke='%236690f7' d='M8 2h1'/%3E%3Cpath stroke='%23628ef7' d='M9 2h1m0 1h1'/%3E%3Cpath stroke='%235f8cf7' d='M10 2h1'/%3E%3Cpath stroke='%235e8bf7' d='M11 2h1'/%3E%3Cpath stroke='%235988f6' d='M12 2h1'/%3E%3Cpath stroke='%235685f6' d='M13 2h1'/%3E%3Cpath stroke='%235082f6' d='M14 2h1'/%3E%3Cpath stroke='%23497cf5' d='M15 2h1'/%3E%3Cpath stroke='%233f75f5' d='M16 2h1m-2 2h1'/%3E%3Cpath stroke='%23326bf2' d='M17 2h1'/%3E%3Cpath stroke='%23235ce3' d='M18 2h1'/%3E%3Cpath stroke='%23305cc5' d='M19 2h1'/%3E%3Cpath stroke='%23e5ecfb' d='M20 2h1'/%3E%3Cpath stroke='%236590f7' d='M1 3h1'/%3E%3Cpath stroke='%2397b4f9' d='M2 3h1'/%3E%3Cpath stroke='%239ab7fa' d='M3 3h1'/%3E%3Cpath stroke='%2389aaf9' d='M4 3h1M2 4h1'/%3E%3Cpath stroke='%237aa0f8' d='M5 3h1'/%3E%3Cpath stroke='%23729af8' d='M6 3h1'/%3E%3Cpath stroke='%236d95f8' d='M7 3h1'/%3E%3Cpath stroke='%236892f8' d='M8 3h1M2 7h1'/%3E%3Cpath stroke='%23658ff7' d='M9 3h1'/%3E%3Cpath stroke='%23618df7' d='M11 3h1'/%3E%3Cpath stroke='%235d8af7' d='M12 3h1M3 9h1'/%3E%3Cpath stroke='%235987f6' d='M13 3h1M2 9h1'/%3E%3Cpath stroke='%235283f6' d='M14 3h1'/%3E%3Cpath stroke='%234c7ef6' d='M15 3h1'/%3E%3Cpath stroke='%234377f5' d='M16 3h1'/%3E%3Cpath stroke='%23376ef2' d='M17 3h1'/%3E%3Cpath stroke='%23285fe3' d='M18 3h1'/%3E%3Cpath stroke='%231546b9' d='M19 3h1'/%3E%3Cpath stroke='%235886f6' d='M1 4h1'/%3E%3Cpath stroke='%238dadf9' d='M3 4h1'/%3E%3Cpath stroke='%237fa3f8' d='M4 4h1'/%3E%3Cpath stroke='%237199f8' d='M5 4h1M4 5h1'/%3E%3Cpath stroke='%236a93f8' d='M6 4h1M4 6h1M3 7h1'/%3E%3Cpath stroke='%23648ef7' d='M7 4h1'/%3E%3Cpath stroke='%235e8af7' d='M8 4h1'/%3E%3Cpath stroke='%235986f7' d='M9 4h1m-6 6h1'/%3E%3Cpath stroke='%235482f6' d='M10 4h1'/%3E%3Cpath stroke='%235180f6' d='M11 4h1'/%3E%3Cpath stroke='%234b7cf5' d='M12 4h1'/%3E%3Cpath stroke='%234a7cf5' d='M13 4h1'/%3E%3Cpath stroke='%233a72f4' d='M16 4h1'/%3E%3Cpath stroke='%23346cf2' d='M17 4h1'/%3E%3Cpath stroke='%232a61e3' d='M18 4h1'/%3E%3Cpath stroke='%231848bb' d='M19 4h1'/%3E%3Cpath stroke='%235282f6' d='M1 5h1m4 6h1m-3 1h1'/%3E%3Cpath stroke='%23799ff8' d='M2 5h1'/%3E%3Cpath stroke='%237ca1f8' d='M3 5h1'/%3E%3Cpath stroke='%23316bf4' d='M16 5h1M3 16h1'/%3E%3Cpath stroke='%233069f1' d='M17 5h1'/%3E%3Cpath stroke='%232c62e4' d='M18 5h1'/%3E%3Cpath stroke='%231d4cbc' d='M19 5h1m-1 1h1'/%3E%3Cpath stroke='%237099f8' d='M3 6h1'/%3E%3Cpath stroke='%232d69f5' d='M16 6h1'/%3E%3Cpath stroke='%232e69f2' d='M17 6h1'/%3E%3Cpath stroke='%232c63e5' d='M18 6h1'/%3E%3Cpath stroke='%234679f5' d='M1 7h1M1 8h1'/%3E%3Cpath stroke='%23658ff8' d='M4 7h1'/%3E%3Cpath stroke='%232a68f5' d='M16 7h1'/%3E%3Cpath stroke='%232c69f2' d='M17 7h1'/%3E%3Cpath stroke='%232a62e4' d='M18 7h1'/%3E%3Cpath stroke='%231c4cbd' d='M19 7h1'/%3E%3Cpath stroke='%23628df8' d='M3 8h1'/%3E%3Cpath stroke='%23608bf7' d='M4 8h1'/%3E%3Cpath stroke='%235482f7' d='M6 8h1'/%3E%3Cpath stroke='%234e7cf6' d='M7 8h1'/%3E%3Cpath stroke='%234778f6' d='M8 8h1'/%3E%3Cpath stroke='%234174f5' d='M9 8h1'/%3E%3Cpath stroke='%233a71f5' d='M10 8h1'/%3E%3Cpath stroke='%23346ef4' d='M11 8h1'/%3E%3Cpath stroke='%232d6bf5' d='M12 8h1'/%3E%3Cpath stroke='%232869f5' d='M13 8h1'/%3E%3Cpath stroke='%232467f5' d='M14 8h1'/%3E%3Cpath stroke='%232567f5' d='M16 8h1'/%3E%3Cpath stroke='%232968f2' d='M17 8h1'/%3E%3Cpath stroke='%232963e4' d='M18 8h1'/%3E%3Cpath stroke='%231b4bbd' d='M19 8h1'/%3E%3Cpath stroke='%233c72f4' d='M1 9h1'/%3E%3Cpath stroke='%235d89f7' d='M4 9h1'/%3E%3Cpath stroke='%235381f6' d='M6 9h1'/%3E%3Cpath stroke='%234e7ef6' d='M7 9h1'/%3E%3Cpath stroke='%23477af5' d='M8 9h1'/%3E%3Cpath stroke='%234178f5' d='M9 9h1'/%3E%3Cpath stroke='%233a74f5' d='M10 9h1'/%3E%3Cpath stroke='%233472f5' d='M11 9h1'/%3E%3Cpath stroke='%232c6ff5' d='M12 9h1'/%3E%3Cpath stroke='%23276cf5' d='M13 9h1'/%3E%3Cpath stroke='%23236af6' d='M14 9h1'/%3E%3Cpath stroke='%232268f5' d='M16 9h1'/%3E%3Cpath stroke='%232569f2' d='M17 9h1'/%3E%3Cpath stroke='%232562e6' d='M18 9h1'/%3E%3Cpath stroke='%23194bbe' d='M19 9h1'/%3E%3Cpath stroke='%23376ef4' d='M1 10h1'/%3E%3Cpath stroke='%235181f6' d='M2 10h1'/%3E%3Cpath stroke='%235785f7' d='M3 10h1'/%3E%3Cpath stroke='%235281f6' d='M6 10h1'/%3E%3Cpath stroke='%23477bf6' d='M8 10h1'/%3E%3Cpath stroke='%234179f6' d='M9 10h1'/%3E%3Cpath stroke='%233b77f5' d='M10 10h1'/%3E%3Cpath stroke='%233474f5' d='M11 10h1'/%3E%3Cpath stroke='%232c72f6' d='M12 10h1'/%3E%3Cpath stroke='%23266ff6' d='M13 10h1'/%3E%3Cpath stroke='%23226df6' d='M14 10h1'/%3E%3Cpath stroke='%231f6af6' d='M16 10h1'/%3E%3Cpath stroke='%23216af3' d='M17 10h1'/%3E%3Cpath stroke='%232162e6' d='M18 10h1'/%3E%3Cpath stroke='%231649be' d='M19 10h1'/%3E%3Cpath stroke='%23326bf4' d='M1 11h1'/%3E%3Cpath stroke='%234b7df5' d='M2 11h1'/%3E%3Cpath stroke='%235483f6' d='M3 11h1'/%3E%3Cpath stroke='%235684f7' d='M4 11h1'/%3E%3Cpath stroke='%234d80f6' d='M7 11h1'/%3E%3Cpath stroke='%23487df6' d='M8 11h1'/%3E%3Cpath stroke='%23427cf6' d='M9 11h1'/%3E%3Cpath stroke='%233c7af6' d='M10 11h1'/%3E%3Cpath stroke='%233478f6' d='M11 11h1'/%3E%3Cpath stroke='%232d76f6' d='M12 11h1'/%3E%3Cpath stroke='%232673f7' d='M13 11h1'/%3E%3Cpath stroke='%232171f7' d='M14 11h1'/%3E%3Cpath stroke='%231c6df6' d='M16 11h1'/%3E%3Cpath stroke='%231c6af4' d='M17 11h1'/%3E%3Cpath stroke='%231c61e6' d='M18 11h1'/%3E%3Cpath stroke='%231248bf' d='M19 11h1'/%3E%3Cpath stroke='%232b66f4' d='M1 12h1'/%3E%3Cpath stroke='%234e7ff6' d='M3 12h1'/%3E%3Cpath stroke='%235182f6' d='M6 12h1'/%3E%3Cpath stroke='%234d81f7' d='M7 12h1'/%3E%3Cpath stroke='%23487ff6' d='M8 12h1'/%3E%3Cpath stroke='%23437ff6' d='M9 12h1'/%3E%3Cpath stroke='%233d7ef6' d='M10 12h1'/%3E%3Cpath stroke='%23357cf6' d='M11 12h1'/%3E%3Cpath stroke='%232d7af7' d='M12 12h1'/%3E%3Cpath stroke='%232677f7' d='M13 12h1'/%3E%3Cpath stroke='%232174f7' d='M14 12h1'/%3E%3Cpath stroke='%23186ef7' d='M16 12h1'/%3E%3Cpath stroke='%23186af4' d='M17 12h1'/%3E%3Cpath stroke='%23165fe7' d='M18 12h1'/%3E%3Cpath stroke='%230f47c0' d='M19 12h1'/%3E%3Cpath stroke='%232562f3' d='M1 13h1'/%3E%3Cpath stroke='%233d73f4' d='M2 13h1'/%3E%3Cpath stroke='%23487bf5' d='M3 13h1'/%3E%3Cpath stroke='%234e80f6' d='M4 13h1'/%3E%3Cpath stroke='%234e81f6' d='M6 13h1'/%3E%3Cpath stroke='%234b80f6' d='M7 13h1'/%3E%3Cpath stroke='%23477ff6' d='M8 13h1'/%3E%3Cpath stroke='%23427ff6' d='M9 13h1'/%3E%3Cpath stroke='%233c7ff6' d='M10 13h1'/%3E%3Cpath stroke='%23367ff7' d='M11 13h1'/%3E%3Cpath stroke='%232d7cf7' d='M12 13h1'/%3E%3Cpath stroke='%232679f8' d='M13 13h1'/%3E%3Cpath stroke='%232077f7' d='M14 13h1'/%3E%3Cpath stroke='%23166ff7' d='M16 13h1'/%3E%3Cpath stroke='%231369f4' d='M17 13h1'/%3E%3Cpath stroke='%23105de8' d='M18 13h1'/%3E%3Cpath stroke='%230a44bf' d='M19 13h1'/%3E%3Cpath stroke='%231e5df3' d='M1 14h1'/%3E%3Cpath stroke='%23366ef4' d='M2 14h1'/%3E%3Cpath stroke='%23497bf5' d='M4 14h1'/%3E%3Cpath stroke='%234a7ef7' d='M6 14h1'/%3E%3Cpath stroke='%23487ef6' d='M7 14h1'/%3E%3Cpath stroke='%23457ff6' d='M8 14h1'/%3E%3Cpath stroke='%234180f6' d='M9 14h1'/%3E%3Cpath stroke='%233b7ff6' d='M10 14h1'/%3E%3Cpath stroke='%23357ff7' d='M11 14h1'/%3E%3Cpath stroke='%232d7df7' d='M12 14h1'/%3E%3Cpath stroke='%23257af8' d='M13 14h1'/%3E%3Cpath stroke='%231e77f8' d='M14 14h1'/%3E%3Cpath stroke='%23116df7' d='M16 14h1'/%3E%3Cpath stroke='%230d66f4' d='M17 14h1m-3 3h1'/%3E%3Cpath stroke='%230b59e7' d='M18 14h1'/%3E%3Cpath stroke='%230641c0' d='M19 14h1m-6 5h1'/%3E%3Cpath stroke='%231859f3' d='M1 15h1'/%3E%3Cpath stroke='%232e68f4' d='M2 15h1'/%3E%3Cpath stroke='%233a71f4' d='M3 15h1'/%3E%3Cpath stroke='%234277f5' d='M4 15h1'/%3E%3Cpath stroke='%230e6cf8' d='M16 15h1'/%3E%3Cpath stroke='%230963f4' d='M17 15h1'/%3E%3Cpath stroke='%230556e7' d='M18 15h1'/%3E%3Cpath stroke='%23023fbf' d='M19 15h1'/%3E%3Cpath stroke='%231456f3' d='M1 16h1'/%3E%3Cpath stroke='%232562f4' d='M2 16h1'/%3E%3Cpath stroke='%233971f4' d='M4 16h1'/%3E%3Cpath stroke='%233d74f5' d='M5 16h1'/%3E%3Cpath stroke='%233d74f6' d='M6 16h1'/%3E%3Cpath stroke='%233b75f5' d='M7 16h1'/%3E%3Cpath stroke='%233976f5' d='M8 16h1'/%3E%3Cpath stroke='%233777f5' d='M9 16h1'/%3E%3Cpath stroke='%233278f6' d='M10 16h1'/%3E%3Cpath stroke='%232c78f7' d='M11 16h1'/%3E%3Cpath stroke='%232577f7' d='M12 16h1'/%3E%3Cpath stroke='%231f76f7' d='M13 16h1'/%3E%3Cpath stroke='%231972f7' d='M14 16h1'/%3E%3Cpath stroke='%23116ef8' d='M15 16h1'/%3E%3Cpath stroke='%230b68f7' d='M16 16h1'/%3E%3Cpath stroke='%230560f4' d='M17 16h1'/%3E%3Cpath stroke='%230253e6' d='M18 16h1'/%3E%3Cpath stroke='%23013dbe' d='M19 16h1'/%3E%3Cpath stroke='%230e50ed' d='M1 17h1'/%3E%3Cpath stroke='%231c5bef' d='M2 17h1'/%3E%3Cpath stroke='%232863f0' d='M3 17h1'/%3E%3Cpath stroke='%232f68f0' d='M4 17h1'/%3E%3Cpath stroke='%23336bf1' d='M5 17h1'/%3E%3Cpath stroke='%23346cf1' d='M6 17h1'/%3E%3Cpath stroke='%23316cf2' d='M7 17h1'/%3E%3Cpath stroke='%23316df2' d='M8 17h1'/%3E%3Cpath stroke='%232e6ff2' d='M9 17h1'/%3E%3Cpath stroke='%232a70f2' d='M10 17h1'/%3E%3Cpath stroke='%232570f3' d='M11 17h1'/%3E%3Cpath stroke='%231f6ff3' d='M12 17h1'/%3E%3Cpath stroke='%23196df4' d='M13 17h1'/%3E%3Cpath stroke='%23136af4' d='M14 17h1'/%3E%3Cpath stroke='%230760f3' d='M16 17h1'/%3E%3Cpath stroke='%23025af0' d='M17 17h1'/%3E%3Cpath stroke='%23004de2' d='M18 17h1'/%3E%3Cpath stroke='%23003ab9' d='M19 17h1'/%3E%3Cpath stroke='%23e5eefd' d='M0 18h1'/%3E%3Cpath stroke='%23285edf' d='M1 18h1'/%3E%3Cpath stroke='%23134fdf' d='M2 18h1'/%3E%3Cpath stroke='%231b55df' d='M3 18h1'/%3E%3Cpath stroke='%23215ae2' d='M4 18h1'/%3E%3Cpath stroke='%23255ce1' d='M5 18h1'/%3E%3Cpath stroke='%23265de0' d='M6 18h1'/%3E%3Cpath stroke='%23245ce1' d='M7 18h1'/%3E%3Cpath stroke='%23235ee2' d='M8 18h1'/%3E%3Cpath stroke='%23215ee2' d='M9 18h1'/%3E%3Cpath stroke='%231e5ee2' d='M10 18h1'/%3E%3Cpath stroke='%231b5fe5' d='M11 18h1'/%3E%3Cpath stroke='%23165ee5' d='M12 18h1'/%3E%3Cpath stroke='%23135de6' d='M13 18h1'/%3E%3Cpath stroke='%230e5be5' d='M14 18h1'/%3E%3Cpath stroke='%230958e6' d='M15 18h1'/%3E%3Cpath stroke='%230454e6' d='M16 18h1'/%3E%3Cpath stroke='%23014ee2' d='M17 18h1'/%3E%3Cpath stroke='%230045d3' d='M18 18h1'/%3E%3Cpath stroke='%231f4eb8' d='M19 18h1'/%3E%3Cpath stroke='%23679ef6' d='M0 19h1'/%3E%3Cpath stroke='%23d0daf1' d='M1 19h1'/%3E%3Cpath stroke='%232856c3' d='M2 19h1'/%3E%3Cpath stroke='%230d3fb6' d='M3 19h1'/%3E%3Cpath stroke='%231144bd' d='M4 19h1'/%3E%3Cpath stroke='%231245bb' d='M5 19h1'/%3E%3Cpath stroke='%231445b9' d='M6 19h1'/%3E%3Cpath stroke='%231244b9' d='M7 19h1'/%3E%3Cpath stroke='%231345bc' d='M8 19h1'/%3E%3Cpath stroke='%231346bd' d='M9 19h1'/%3E%3Cpath stroke='%231045be' d='M10 19h1'/%3E%3Cpath stroke='%230d45c0' d='M11 19h1'/%3E%3Cpath stroke='%230a45c1' d='M12 19h1'/%3E%3Cpath stroke='%230844c3' d='M13 19h1'/%3E%3Cpath stroke='%23033fc0' d='M15 19h1'/%3E%3Cpath stroke='%23013fc3' d='M16 19h1'/%3E%3Cpath stroke='%23003bbe' d='M17 19h1'/%3E%3Cpath stroke='%231f4eb9' d='M18 19h1'/%3E%3Cpath stroke='%23cfd8ed' d='M19 19h1'/%3E%3Cpath stroke='%23669bf5' d='M20 19h1M1 20h1'/%3E%3Cpath stroke='%23e5edfd' d='M18 20h1'/%3E%3Cpath stroke='%236699f3' d='M19 20h1'/%3E%3C/svg%3E");
+}
+[class*="winButtonClose_"] {
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -0.5 21 21' shape-rendering='crispEdges'%3E%3Cpath stroke='%23b3c4ef' d='M1 0h1m17 0h1M0 1h1m19 0h1M0 19h1m19 0h1M1 20h1m17 0h1'/%3E%3Cpath stroke='%23f4f6fd' d='M2 0h1m17 2h1M0 18h1m17 2h1'/%3E%3Cpath stroke='%23fff' d='M3 0h16M0 2h1M0 3h1m19 0h1M0 4h1m19 0h1M0 5h1m5 0h1m7 0h1m5 0h1M0 6h1m4 0h3m5 0h3m4 0h1M0 7h1m5 0h3m3 0h3m5 0h1M0 8h1m6 0h3m1 0h3m6 0h1M0 9h1m7 0h5m7 0h1M0 10h1m8 0h3m8 0h1M0 11h1m7 0h5m7 0h1M0 12h1m6 0h3m1 0h2m7 0h1M0 13h1m5 0h3m3 0h3m5 0h1M0 14h1m4 0h3m5 0h3m4 0h1M0 15h1m5 0h1m7 0h1m5 0h1M0 16h1m19 0h1M0 17h1m19 0h1m-1 1h1M2 20h16'/%3E%3Cpath stroke='%23fae1dc' d='M1 1h1'/%3E%3Cpath stroke='%23eb8b73' d='M2 1h1'/%3E%3Cpath stroke='%23e97b60' d='M3 1h1'/%3E%3Cpath stroke='%23e77155' d='M4 1h1'/%3E%3Cpath stroke='%23e66a4d' d='M5 1h1M1 6h1m5 4h1'/%3E%3Cpath stroke='%23e56648' d='M6 1h1'/%3E%3Cpath stroke='%23e46142' d='M7 1h1'/%3E%3Cpath stroke='%23e46344' d='M8 1h1m5 3h1M2 12h1'/%3E%3Cpath stroke='%23e45f3e' d='M9 1h2'/%3E%3Cpath stroke='%23e35c3b' d='M11 1h2'/%3E%3Cpath stroke='%23e25633' d='M13 1h2'/%3E%3Cpath stroke='%23e25330' d='M15 1h1'/%3E%3Cpath stroke='%23e04d28' d='M16 1h1'/%3E%3Cpath stroke='%23dc451f' d='M17 1h1'/%3E%3Cpath stroke='%23d05334' d='M18 1h1'/%3E%3Cpath stroke='%23efd8d2' d='M19 1h1'/%3E%3Cpath stroke='%23ec8d76' d='M1 2h1'/%3E%3Cpath stroke='%23efa390' d='M2 2h1'/%3E%3Cpath stroke='%23f0a694' d='M3 2h1'/%3E%3Cpath stroke='%23ee9a85' d='M4 2h1'/%3E%3Cpath stroke='%23eb8d75' d='M5 2h1'/%3E%3Cpath stroke='%23ea876e' d='M6 2h1'/%3E%3Cpath stroke='%23ea8168' d='M7 2h1'/%3E%3Cpath stroke='%23e97f66' d='M8 2h1'/%3E%3Cpath stroke='%23e97c62' d='M9 2h1m0 1h1'/%3E%3Cpath stroke='%23e8795f' d='M10 2h1'/%3E%3Cpath stroke='%23e8795e' d='M11 2h1'/%3E%3Cpath stroke='%23e87559' d='M12 2h1'/%3E%3Cpath stroke='%23e77256' d='M13 2h1'/%3E%3Cpath stroke='%23e66e50' d='M14 2h1'/%3E%3Cpath stroke='%23e56849' d='M15 2h1'/%3E%3Cpath stroke='%23e4603f' d='M16 2h1m-2 2h1'/%3E%3Cpath stroke='%23e05532' d='M17 2h1'/%3E%3Cpath stroke='%23d04623' d='M18 2h1'/%3E%3Cpath stroke='%23b64b30' d='M19 2h1'/%3E%3Cpath stroke='%23e97f65' d='M1 3h1'/%3E%3Cpath stroke='%23f0a997' d='M2 3h1'/%3E%3Cpath stroke='%23f1ac9a' d='M3 3h1'/%3E%3Cpath stroke='%23ee9d89' d='M4 3h1M2 4h1'/%3E%3Cpath stroke='%23ec917a' d='M5 3h1'/%3E%3Cpath stroke='%23eb8b72' d='M6 3h1'/%3E%3Cpath stroke='%23ea856d' d='M7 3h1'/%3E%3Cpath stroke='%23e98168' d='M8 3h1M2 7h1'/%3E%3Cpath stroke='%23e87e65' d='M9 3h1'/%3E%3Cpath stroke='%23e97b61' d='M11 3h1'/%3E%3Cpath stroke='%23e8775d' d='M12 3h1M3 9h1'/%3E%3Cpath stroke='%23e87459' d='M13 3h1M2 9h1'/%3E%3Cpath stroke='%23e66f52' d='M14 3h1'/%3E%3Cpath stroke='%23e56a4c' d='M15 3h1'/%3E%3Cpath stroke='%23e46343' d='M16 3h1'/%3E%3Cpath stroke='%23e15937' d='M17 3h1'/%3E%3Cpath stroke='%23d24a28' d='M18 3h1'/%3E%3Cpath stroke='%23aa3315' d='M19 3h1'/%3E%3Cpath stroke='%23e87458' d='M1 4h1'/%3E%3Cpath stroke='%23efa18d' d='M3 4h1'/%3E%3Cpath stroke='%23ed957f' d='M4 4h1'/%3E%3Cpath stroke='%23eb8a71' d='M5 4h1M4 5h1'/%3E%3Cpath stroke='%23ea836a' d='M6 4h1M4 6h1M3 7h1'/%3E%3Cpath stroke='%23e97d64' d='M7 4h1'/%3E%3Cpath stroke='%23e8785e' d='M8 4h1'/%3E%3Cpath stroke='%23e77359' d='M9 4h1'/%3E%3Cpath stroke='%23e76f54' d='M10 4h1'/%3E%3Cpath stroke='%23e66d51' d='M11 4h1'/%3E%3Cpath stroke='%23e5684b' d='M12 4h1'/%3E%3Cpath stroke='%23e5684a' d='M13 4h1'/%3E%3Cpath stroke='%23e35c3a' d='M16 4h1m-7 4h1m-8 7h1'/%3E%3Cpath stroke='%23e05634' d='M17 4h1'/%3E%3Cpath stroke='%23d24c2a' d='M18 4h1'/%3E%3Cpath stroke='%23ac3618' d='M19 4h1'/%3E%3Cpath stroke='%23e76f52' d='M1 5h1m4 6h1m-3 1h1'/%3E%3Cpath stroke='%23ec9179' d='M2 5h1'/%3E%3Cpath stroke='%23ec937c' d='M3 5h1'/%3E%3Cpath stroke='%23f7ccc2' d='M5 5h1'/%3E%3Cpath stroke='%23e77259' d='M7 5h1M5 9h1'/%3E%3Cpath stroke='%23e76d53' d='M8 5h1'/%3E%3Cpath stroke='%23e5684d' d='M9 5h1M8 6h1'/%3E%3Cpath stroke='%23e46446' d='M10 5h1'/%3E%3Cpath stroke='%23e45f41' d='M11 5h1'/%3E%3Cpath stroke='%23e35b3a' d='M12 5h1m-2 1h1'/%3E%3Cpath stroke='%23e35938' d='M13 5h1'/%3E%3Cpath stroke='%23f3bbad' d='M15 5h1'/%3E%3Cpath stroke='%23e25531' d='M16 5h1'/%3E%3Cpath stroke='%23df5330' d='M17 5h1'/%3E%3Cpath stroke='%23d34e2c' d='M18 5h1'/%3E%3Cpath stroke='%23ad3a1d' d='M19 5h1m-1 1h1'/%3E%3Cpath stroke='%23eb876e' d='M2 6h1'/%3E%3Cpath stroke='%23eb8a70' d='M3 6h1'/%3E%3Cpath stroke='%23e46447' d='M9 6h1'/%3E%3Cpath stroke='%23e45f40' d='M10 6h1'/%3E%3Cpath stroke='%23e25634' d='M12 6h1'/%3E%3Cpath stroke='%23e2522d' d='M16 6h1'/%3E%3Cpath stroke='%23df522e' d='M17 6h1'/%3E%3Cpath stroke='%23d34d2c' d='M18 6h1'/%3E%3Cpath stroke='%23e56546' d='M1 7h1M1 8h1'/%3E%3Cpath stroke='%23e97e65' d='M4 7h1'/%3E%3Cpath stroke='%23e8775e' d='M5 7h1'/%3E%3Cpath stroke='%23e46143' d='M9 7h1'/%3E%3Cpath stroke='%23e45d3d' d='M10 7h1'/%3E%3Cpath stroke='%23e35836' d='M11 7h1'/%3E%3Cpath stroke='%23e24e27' d='M15 7h1'/%3E%3Cpath stroke='%23e2502a' d='M16 7h1'/%3E%3Cpath stroke='%23e0512c' d='M17 7h1'/%3E%3Cpath stroke='%23d34d2a' d='M18 7h1'/%3E%3Cpath stroke='%23ad391c' d='M19 7h1'/%3E%3Cpath stroke='%23e87a60' d='M2 8h1m1 0h1'/%3E%3Cpath stroke='%23e87c62' d='M3 8h1'/%3E%3Cpath stroke='%23e8745b' d='M5 8h1'/%3E%3Cpath stroke='%23e76e54' d='M6 8h1'/%3E%3Cpath stroke='%23e24d24' d='M14 8h1'/%3E%3Cpath stroke='%23e24b22' d='M15 8h1'/%3E%3Cpath stroke='%23e24d25' d='M16 8h1'/%3E%3Cpath stroke='%23e05029' d='M17 8h1'/%3E%3Cpath stroke='%23d44c29' d='M18 8h1'/%3E%3Cpath stroke='%23ae391b' d='M19 8h1'/%3E%3Cpath stroke='%23e35d3c' d='M1 9h1'/%3E%3Cpath stroke='%23e8765d' d='M4 9h1'/%3E%3Cpath stroke='%23e66f53' d='M6 9h1'/%3E%3Cpath stroke='%23e56b4e' d='M7 9h1'/%3E%3Cpath stroke='%23e45127' d='M13 9h1'/%3E%3Cpath stroke='%23e44f23' d='M14 9h1'/%3E%3Cpath stroke='%23e34c20' d='M15 9h1'/%3E%3Cpath stroke='%23e34d22' d='M16 9h1'/%3E%3Cpath stroke='%23e14f25' d='M17 9h1'/%3E%3Cpath stroke='%23d54a25' d='M18 9h1'/%3E%3Cpath stroke='%23af3719' d='M19 9h1'/%3E%3Cpath stroke='%23e35937' d='M1 10h1'/%3E%3Cpath stroke='%23e76d51' d='M2 10h1'/%3E%3Cpath stroke='%23e87257' d='M3 10h1'/%3E%3Cpath stroke='%23e87359' d='M4 10h1'/%3E%3Cpath stroke='%23e77157' d='M5 10h1'/%3E%3Cpath stroke='%23e66e52' d='M6 10h1'/%3E%3Cpath stroke='%23e56747' d='M8 10h1'/%3E%3Cpath stroke='%23e5572c' d='M12 10h1'/%3E%3Cpath stroke='%23e55326' d='M13 10h1'/%3E%3Cpath stroke='%23e55022' d='M14 10h1'/%3E%3Cpath stroke='%23e54d1e' d='M15 10h1'/%3E%3Cpath stroke='%23e54d1f' d='M16 10h1'/%3E%3Cpath stroke='%23e24e21' d='M17 10h1'/%3E%3Cpath stroke='%23d64921' d='M18 10h1'/%3E%3Cpath stroke='%23af3516' d='M19 10h1'/%3E%3Cpath stroke='%23e25432' d='M1 11h1'/%3E%3Cpath stroke='%23e5694b' d='M2 11h1'/%3E%3Cpath stroke='%23e77054' d='M3 11h1'/%3E%3Cpath stroke='%23e77156' d='M4 11h1'/%3E%3Cpath stroke='%23e87055' d='M5 11h1'/%3E%3Cpath stroke='%23e66c4d' d='M7 11h1'/%3E%3Cpath stroke='%23e75526' d='M13 11h1'/%3E%3Cpath stroke='%23e75221' d='M14 11h1'/%3E%3Cpath stroke='%23e64e1c' d='M15 11h1'/%3E%3Cpath stroke='%23e64d1c' d='M16 11h1'/%3E%3Cpath stroke='%23e34c1c' d='M17 11h1'/%3E%3Cpath stroke='%23d6461c' d='M18 11h1'/%3E%3Cpath stroke='%23b03312' d='M19 11h1'/%3E%3Cpath stroke='%23e14f2b' d='M1 12h1'/%3E%3Cpath stroke='%23e66b4e' d='M3 12h1'/%3E%3Cpath stroke='%23e76f53' d='M5 12h1'/%3E%3Cpath stroke='%23e66e51' d='M6 12h1'/%3E%3Cpath stroke='%23e7653d' d='M10 12h1'/%3E%3Cpath stroke='%23fef5f1' d='M13 12h1'/%3E%3Cpath stroke='%23e85421' d='M14 12h1'/%3E%3Cpath stroke='%23e8501b' d='M15 12h1'/%3E%3Cpath stroke='%23e74d18' d='M16 12h1'/%3E%3Cpath stroke='%23e44a18' d='M17 12h1'/%3E%3Cpath stroke='%23d74216' d='M18 12h1'/%3E%3Cpath stroke='%23b2310f' d='M19 12h1'/%3E%3Cpath stroke='%23e04b25' d='M1 13h1m0 3h1'/%3E%3Cpath stroke='%23e35e3d' d='M2 13h1'/%3E%3Cpath stroke='%23e56748' d='M3 13h1'/%3E%3Cpath stroke='%23e66c4e' d='M4 13h1'/%3E%3Cpath stroke='%23e66d50' d='M5 13h1'/%3E%3Cpath stroke='%23e76842' d='M9 13h1'/%3E%3Cpath stroke='%23e7653c' d='M10 13h1'/%3E%3Cpath stroke='%23e86236' d='M11 13h1'/%3E%3Cpath stroke='%23e95019' d='M15 13h1m-2 3h1'/%3E%3Cpath stroke='%23e84c16' d='M16 13h1'/%3E%3Cpath stroke='%23e44713' d='M17 13h1'/%3E%3Cpath stroke='%23d83f10' d='M18 13h1'/%3E%3Cpath stroke='%23b12d0a' d='M19 13h1'/%3E%3Cpath stroke='%23df451e' d='M1 14h1'/%3E%3Cpath stroke='%23e25836' d='M2 14h1'/%3E%3Cpath stroke='%23e46242' d='M3 14h1m0 1h1'/%3E%3Cpath stroke='%23e56749' d='M4 14h1'/%3E%3Cpath stroke='%23e66845' d='M8 14h1'/%3E%3Cpath stroke='%23e76741' d='M9 14h1'/%3E%3Cpath stroke='%23e7643b' d='M10 14h1'/%3E%3Cpath stroke='%23e86235' d='M11 14h1'/%3E%3Cpath stroke='%23ea5e2d' d='M12 14h1'/%3E%3Cpath stroke='%23e94a11' d='M16 14h1m-2 2h1'/%3E%3Cpath stroke='%23e6440d' d='M17 14h1'/%3E%3Cpath stroke='%23d73b0b' d='M18 14h1'/%3E%3Cpath stroke='%23b12b06' d='M19 14h1'/%3E%3Cpath stroke='%23de4018' d='M1 15h1'/%3E%3Cpath stroke='%23e1512e' d='M2 15h1'/%3E%3Cpath stroke='%23f5c1b5' d='M5 15h1'/%3E%3Cpath stroke='%23e66543' d='M7 15h1'/%3E%3Cpath stroke='%23e66541' d='M8 15h1'/%3E%3Cpath stroke='%23e6643d' d='M9 15h1'/%3E%3Cpath stroke='%23e76238' d='M10 15h1'/%3E%3Cpath stroke='%23e86032' d='M11 15h1'/%3E%3Cpath stroke='%23e95c2a' d='M12 15h1'/%3E%3Cpath stroke='%23ea5924' d='M13 15h1'/%3E%3Cpath stroke='%23f7b8a1' d='M15 15h1'/%3E%3Cpath stroke='%23e9480e' d='M16 15h1'/%3E%3Cpath stroke='%23e54009' d='M17 15h1'/%3E%3Cpath stroke='%23d73605' d='M18 15h1'/%3E%3Cpath stroke='%23b02702' d='M19 15h1'/%3E%3Cpath stroke='%23dd3c14' d='M1 16h1'/%3E%3Cpath stroke='%23e15431' d='M3 16h1'/%3E%3Cpath stroke='%23e35b39' d='M4 16h1'/%3E%3Cpath stroke='%23e45e3d' d='M5 16h1'/%3E%3Cpath stroke='%23e45f3d' d='M6 16h1'/%3E%3Cpath stroke='%23e45e3b' d='M7 16h1'/%3E%3Cpath stroke='%23e55e39' d='M8 16h1'/%3E%3Cpath stroke='%23e55e37' d='M9 16h1'/%3E%3Cpath stroke='%23e65d32' d='M10 16h1'/%3E%3Cpath stroke='%23e75b2c' d='M11 16h1'/%3E%3Cpath stroke='%23e85725' d='M12 16h1'/%3E%3Cpath stroke='%23e9541f' d='M13 16h1'/%3E%3Cpath stroke='%23e8440b' d='M16 16h1'/%3E%3Cpath stroke='%23e43d05' d='M17 16h1'/%3E%3Cpath stroke='%23d63302' d='M18 16h1'/%3E%3Cpath stroke='%23af2601' d='M19 16h1'/%3E%3Cpath stroke='%23d8370e' d='M1 17h1'/%3E%3Cpath stroke='%23db431c' d='M2 17h1'/%3E%3Cpath stroke='%23dd4c28' d='M3 17h1'/%3E%3Cpath stroke='%23de522f' d='M4 17h1'/%3E%3Cpath stroke='%23df5533' d='M5 17h1'/%3E%3Cpath stroke='%23e05734' d='M6 17h1'/%3E%3Cpath stroke='%23e05531' d='M7 17h1'/%3E%3Cpath stroke='%23e05631' d='M8 17h1'/%3E%3Cpath stroke='%23e1562e' d='M9 17h1'/%3E%3Cpath stroke='%23e2552a' d='M10 17h1'/%3E%3Cpath stroke='%23e45325' d='M11 17h1'/%3E%3Cpath stroke='%23e4501f' d='M12 17h1'/%3E%3Cpath stroke='%23e54c19' d='M13 17h1'/%3E%3Cpath stroke='%23e54813' d='M14 17h1'/%3E%3Cpath stroke='%23e5430d' d='M15 17h1'/%3E%3Cpath stroke='%23e43e07' d='M16 17h1'/%3E%3Cpath stroke='%23e03802' d='M17 17h1'/%3E%3Cpath stroke='%23d12f00' d='M18 17h1'/%3E%3Cpath stroke='%23aa2300' d='M19 17h1'/%3E%3Cpath stroke='%23cd4928' d='M1 18h1'/%3E%3Cpath stroke='%23cc3813' d='M2 18h1'/%3E%3Cpath stroke='%23cc3e1b' d='M3 18h1'/%3E%3Cpath stroke='%23cf4421' d='M4 18h1'/%3E%3Cpath stroke='%23cf4725' d='M5 18h1'/%3E%3Cpath stroke='%23cf4726' d='M6 18h1'/%3E%3Cpath stroke='%23cf4624' d='M7 18h1'/%3E%3Cpath stroke='%23d04723' d='M8 18h1'/%3E%3Cpath stroke='%23d14621' d='M9 18h1'/%3E%3Cpath stroke='%23d2451e' d='M10 18h1'/%3E%3Cpath stroke='%23d5451b' d='M11 18h1'/%3E%3Cpath stroke='%23d54216' d='M12 18h1'/%3E%3Cpath stroke='%23d64013' d='M13 18h1'/%3E%3Cpath stroke='%23d53d0e' d='M14 18h1'/%3E%3Cpath stroke='%23d63909' d='M15 18h1'/%3E%3Cpath stroke='%23d53504' d='M16 18h1'/%3E%3Cpath stroke='%23d13001' d='M17 18h1'/%3E%3Cpath stroke='%23c22a00' d='M18 18h1'/%3E%3Cpath stroke='%23ab3c1f' d='M19 18h1'/%3E%3Cpath stroke='%23eed6d0' d='M1 19h1'/%3E%3Cpath stroke='%23b54428' d='M2 19h1'/%3E%3Cpath stroke='%23a62b0d' d='M3 19h1'/%3E%3Cpath stroke='%23ac3011' d='M4 19h1'/%3E%3Cpath stroke='%23ab3112' d='M5 19h1'/%3E%3Cpath stroke='%23a93214' d='M6 19h1'/%3E%3Cpath stroke='%23a93012' d='M7 19h1'/%3E%3Cpath stroke='%23ac3213' d='M8 19h1'/%3E%3Cpath stroke='%23ad3213' d='M9 19h1'/%3E%3Cpath stroke='%23ae3110' d='M10 19h1'/%3E%3Cpath stroke='%23b1300d' d='M11 19h1'/%3E%3Cpath stroke='%23b22e0a' d='M12 19h1'/%3E%3Cpath stroke='%23b42d08' d='M13 19h1'/%3E%3Cpath stroke='%23b12a06' d='M14 19h1'/%3E%3Cpath stroke='%23b12803' d='M15 19h1'/%3E%3Cpath stroke='%23b42701' d='M16 19h1'/%3E%3Cpath stroke='%23ae2400' d='M17 19h1'/%3E%3Cpath stroke='%23ac3c1f' d='M18 19h1'/%3E%3Cpath stroke='%23ead4cf' d='M19 19h1'/%3E%3C/svg%3E");
+}
+/* ============================================================
+   HEADER DA CONVERSA COMO ABA DE APLICACAO DO XP
+   valores tirados do XP.css (menu[role=tablist]):
+     aba ativa -> fundo #fcfcfe, borda #919b9c, topo laranja #e68b2c
+                  com inset 0 2px #ffc73c, e sem borda embaixo pra
+                  "encostar" no painel de conteudo
+   alvo: a <section> que contem .upperContainer__9293f e a barra.
+   (.subtitleContainer_ era o nome antigo; nao existe mais nesta build)
+   ============================================================ */
+section:has(> [class*="upperContainer_"]) {
+    /* menu[role=tablist] do XP.css: sem fundo proprio, so o item da aba tem.
+       margin-bottom negativa e o que faz a aba encostar no painel de conteudo. */
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 0 -2px !important;
+    padding: 0 0 0 3px !important;
+    min-height: 0 !important;
+    height: auto !important;
+    /* NADA de align-items aqui: a section e flex em COLUNA, entao
+       flex-end alinharia na horizontal e jogaria o header pra direita.
+       O alinhamento no rodape vai no .upperContainer_, que e linha. */
+    position: relative;
+    z-index: 8;
+}
+[class*="upperContainer_"],
+[class*="upperContainer_"] [class*="toolbar_"] {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* (a aba propriamente dita esta na secao (G), com o .children_) */
+
+/* o painel da conversa e o article[role=tabpanel]: e nele que a aba encosta */
+[class*="chatContent_"] {
+    background: linear-gradient(180deg, #fcfcfe, #f4f3ee) !important;
+    border: 1px solid #919b9c !important;
+    box-shadow:
+        inset 1px 1px #fcfcfe,
+        inset -1px -1px #fcfcfe,
+        1px 2px 2px 0 rgba(208, 206, 191, 0.75) !important;
+    position: relative;
+    z-index: 2;
+}
+
+/* texto e icones voltam a ser escuros, sem o azul */
+[class*="upperContainer_"] h1,
+[class*="upperContainer_"] h2 {
+    color: #000000 !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+[class*="upperContainer_"] [class*="children_"] svg {
+    color: #000000 !important;
+}
+
+/* a busca continua com campo branco afundado */
+[class*="searchBar_"] {
+    background: #ffffff !important;
+    box-shadow: inset 1px 1px var(--xp-shadow), inset -1px -1px var(--xp-light) !important;
+}
+[class*="searchBar_"],
+[class*="searchBar_"] * {
+    color: #000000 !important;
+}
+
+/* ============================================================
+   ICONES DO WINDOWS (pack trapd00r/win95-winxp_icons via jsDelivr)
+   o pack e .ico; o Chromium do Discord renderiza .ico em background-image.
+   ============================================================ */
+
+/* fundo do chat no creme da referencia, em vez de branco puro */
+body,
+.theme-dark:not(.custom-user-profile-theme),
+.theme-light:not(.custom-user-profile-theme) {
+    --chat-background-default: #efefe2;
+}
+
+/* ============================================================
+   (4) BOTOES DO HEADER DA CONVERSA COM CARA DE BOTAO XP
+   mesmos valores do "button" do XP.css: borda #003c74, gradiente
+   claro, e o brilho ambar no hover.
+   ============================================================ */
+/* CORRECAO: antes cada icone era um botao emoldurado de #003c74.
+   Barra de ferramentas do XP nao e assim - o icone fica SOLTO, e a
+   moldura so aparece no hover / quando esta pressionado. Com 6
+   icones lado a lado, a moldura permanente virava uma cerca. */
+[class*="upperContainer_"] [class*="toolbar_"] button,
+[class*="upperContainer_"] [class*="toolbar_"] > a,
+[class*="upperContainer_"] [class*="toolbar_"] > div[role="button"] {
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    border-radius: 3px !important;
+    padding: 2px 5px !important;
+    margin-left: 2px !important;
+    color: #000000 !important;
+    transition: none !important;
+}
+[class*="upperContainer_"] [class*="toolbar_"] button:hover,
+[class*="upperContainer_"] [class*="toolbar_"] > a:hover,
+[class*="upperContainer_"] [class*="toolbar_"] > div[role="button"]:hover {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #fffaef, #ffe6a8 60%, #ffd25e) !important;
+}
+[class*="upperContainer_"] [class*="toolbar_"] button:active,
+[class*="upperContainer_"] [class*="toolbar_"] > a:active,
+[class*="upperContainer_"] [class*="toolbar_"] > div[role="button"]:active {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #e0b968, #ffd98a 40%, #ffe9bd) !important;
+    box-shadow: inset 1px 1px #c9a24a !important;
+}
+
+/* ============================================================
+   (5) FONTE E CORES DO HEADER DO APP
+   XP usa Tahoma 11px: branco em negrito na faixa de titulo,
+   preto na barra de menu. os icones da barra de menu ficam num
+   cinza-escuto em vez de preto puro, que era o que pesava.
+   ============================================================ */
+[data-window-chrome="true"] {
+    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-size: 11px !important;
+}
+[data-window-chrome="true"] [class*="title_"] {
+    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    text-shadow: 1px 1px #0f1089;
+}
+[data-window-chrome="true"] > [class*="trailing_"]::before {
+    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-size: 11px !important;
+    color: #000000 !important;
+}
+[data-window-chrome="true"] > [class*="trailing_"] svg {
+    color: #3b3b3b !important;
+}
+
+/* ============================================================
+   AJUSTES COM BASE NO DOM REAL DO HEADER
+   <section class="title_f75fb0 container__9293f">      <- a barra
+     <div class="upperContainer__9293f">
+       <div class="children__9293f">
+         <div class="channelIcon__9293f iconWrapper__9293f">  <- o #
+         <div class="titleWrapper__9293f"><h1 class="title__9293f">
+       <div class="toolbar__9293f"> ... <div class="searchBar_...">
+   ancoro por section[class*="title_"]: a <section> e a unica que casa,
+   o h1 tambem tem "title_" mas nao e section.
+   ============================================================ */
+
+/* (1) o padding que empurrava a aba pra cima e o padding-top da section.
+   nao zero tudo: alinho a cadeia no rodape e tiro so o espaco de baixo. */
+/* a <section> do header muda de classe conforme a tela (title_f75fb0 em
+   canal/DM, so container__9293f em Amigos), entao ancoro no filho comum
+   .upperContainer__9293f e subo com :has - assim vale nas quatro. */
+section:has(> [class*="upperContainer_"]) {
+    /* a section e flex em COLUNA: align-items aqui alinharia na horizontal
+       e jogaria o header todo pra direita. so o padding sai. */
+    padding-bottom: 0 !important;
+}
+[class*="upperContainer_"] {
+    /* linha, entao flex-end aqui e vertical mesmo: encosta a aba no rodape */
+    align-items: flex-end !important;
+}
+[class*="upperContainer_"] {
+    /* so no container: no .children_ isso esticava a aba ate 40px */
+    height: 100% !important;
+}
+
+/* (3) titulo do app em branco: o texto fica num filho do title_,
+   entao precisa pegar os descendentes tambem */
+[data-window-chrome="true"] [class*="title_"],
+[data-window-chrome="true"] [class*="title_"] * {
+    color: #ffffff !important;
+}
+
+/* (2) o deslize de hover do midnight vive dentro de
+   @container body style(--animations: on). Como --animations esta off,
+   o reforco que existia aqui era seletor caro sem efeito nenhum -
+   [class*="wrapper_"]:hover casava com meio app a cada mouse move. */
+
+/* (3) botoes e busca do header nao encostados no topo */
+[class*="upperContainer_"] [class*="toolbar_"] {
+    align-self: center !important;
+    margin-block: 4px !important;
+}
+
+/* (4) chat e input como UM bloco so.
+   os dois sao irmaos dentro de .chat_, entao nao da pra uma moldura so
+   envolver ambos: a do chat abre em cima e nao fecha embaixo, e a do
+   input fecha embaixo sem topo. juntas leem como um painel unico. */
+[class*="chatContent_"] {
+    /* a borda de baixo fica abaixo do input (o form_ e filho daqui),
+       entao ela fecha o painel em vez de dividir chat e input. a divisao
+       entre os dois e o border-top do channelTextArea. */
+    border-bottom: 1px solid #919b9c !important;
+}
+/* o .form_ e filho do .chatContent_, nao irmao dele (confirmado no midnight,
+   que usa .chatContent_f75fb0:has(> .form_f75fb0 ...)). e o box do input vem
+   do midnight com prefixo #app-mount, entao preciso da mesma forca. */
+[class*="chatContent_"] > [class*="form_"] {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+#app-mount [class*="channelTextArea_"] {
+    margin: 0 !important;
+    border: none !important;
+    border-top: 1px solid #919b9c !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: linear-gradient(180deg, #fcfcfe, #f4f3ee) !important;
+    backdrop-filter: none !important;
+}
+
+/* ============================================================
+   BARRA DE SERVIDORES E LISTA DE CANAIS COM CARA DE XP
+   referencia: painel esquerdo do Windows Explorer.
+   lista = campo branco afundado com borda #7f9db9
+   item selecionado = azul solido #316ac5 com texto branco
+   item sob o mouse = azul claro #d8e4f8
+   selectores conferidos nos comentarios do midnight:
+     .sidebarList__5e434  -> lista de canais
+     .wrapper__2ea32 .link__2ea32 -> item de canal
+     .guilds__5e434 -> barra de servidores
+   ============================================================ */
+
+/* lista de canais como campo do Explorer */
+[class*="sidebarList_"] {
+    background: #ffffff !important;
+    border: none !important;
+    border-left: 1px solid var(--xp-shadow) !important;
+    box-sizing: border-box !important;
+}
+[class*="sidebarList_"] [class*="scroller_"],
+[class*="sidebarList_"] [class*="container_"] {
+    background: transparent !important;
+}
+
+/* itens de canal: retos, compactos, sem enfeite */
+[class*="sidebarList_"] [class*="link_"],
+[class*="sidebarList_"] [class*="channel_"] {
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+[class*="sidebarList_"] [class*="link_"]:hover,
+[class*="sidebarList_"] [class*="channel_"]:hover {
+    background: #d8e4f8 !important;
+}
+/* selecionado: azul de selecao do XP, texto branco */
+[class*="sidebarList_"] [class*="selected_"],
+[class*="sidebarList_"] [aria-selected="true"] [class*="link_"],
+[class*="sidebarList_"] [class*="link_"][aria-selected="true"] {
+    background: #316ac5 !important;
+}
+[class*="sidebarList_"] [class*="selected_"],
+[class*="sidebarList_"] [class*="selected_"] *,
+[class*="sidebarList_"] [aria-selected="true"] [class*="link_"],
+[class*="sidebarList_"] [aria-selected="true"] [class*="link_"] * {
+    color: #ffffff !important;
+}
+
+/* cabecalhos de categoria como titulo de grupo do XP */
+[class*="sidebarList_"] h3,
+[class*="sidebarList_"] h3 * {
+    color: #0046d5 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: none !important;
+}
+
+/* barra de servidores como toolbar vertical do XP */
+[class*="guilds_"] {
+    background: linear-gradient(90deg, #f1efe2, #dcd8c8) !important;
+    border-right: 1px solid var(--xp-shadow) !important;
+}
+/* icone de servidor como botao de toolbar do XP.
+   uso box-shadow EXTERNO (sem inset): border empurraria o layout e
+   sombra interna ficaria escondida embaixo da imagem do icone, que
+   preenche o item inteiro. */
+[class*="guilds_"] [class*="listItem_"] {
+    transition: none !important;
+}
+/* botao de toolbar do XP: placa de fundo em volta do icone.
+   anel (outline/box-shadow) nao serve aqui: externo e cortado pelo
+   overflow do rail estreito, e interno fica atras da imagem do icone,
+   que e conteudo e pinta por cima. com padding fixo a placa aparece
+   na moldura em volta e nada pula ao passar o mouse. */
+/* .listItem__650eb ocupa a largura INTEIRA do rail e centraliza o icone
+   (width: var(--custom-guild-list-width); justify-content: center).
+   entao padding nele nao vira moldura em volta do icone, e anel some
+   atras da imagem. a solucao e realce de faixa inteira, que e como o XP
+   destaca item de menu e de toolbar de qualquer jeito. */
+[class*="guilds_"] [class*="listItem_"] {
+    padding-block: 3px !important;
+    box-sizing: border-box !important;
+}
+/* servidor aberto: faixa azul de selecao do XP.
+   vem ANTES do hover de proposito: :has() soma a especificidade do seu
+   argumento, entao essa regra vale (0,4,0) e ganhava do hover simples,
+   deixando tudo azul. o hover abaixo empata em especificidade e, vindo
+   depois, ganha enquanto o mouse esta em cima. */
+[class*="guilds_"] [class*="listItem_"]:has([class*="selected_"]),
+[class*="guilds_"] [class*="listItem_"]:has([aria-selected="true"]) {
+    background: linear-gradient(180deg, #7ba7e3, #316ac5 60%, #1f4c9c) !important;
+}
+[class*="guilds_"] [class*="listItem_"]:hover:not(:active) {
+    background: linear-gradient(180deg, #fff0cf, #ffc73c 60%, #e5a01a) !important;
+}
+[class*="guilds_"] [class*="listItem_"]:active:active {
+    background: linear-gradient(180deg, #e5a01a, #fbc761 60%, #fff0cf) !important;
+}
+
+/* (3) painel do usuario colado na lista de canais, como barra de status
+   do mesmo painel: a lista abre a moldura e o painel fecha embaixo */
+[class*="sidebarList_"] {
+    border-bottom: none !important;
+}
+[class*="panels_"] {
+    background: var(--xp-face) !important;
+    border: none !important;
+    border-top: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+/* ============================================================
+   AREA DO USUARIO COMO BARRA DE STATUS COM BOTOES XP
+   ============================================================ */
+[class*="panels_"] {
+    padding: 4px 6px !important;
+}
+/* mic, fone e engrenagem viram botoes de toolbar de verdade */
+[class*="panels_"] [class*="buttons__"] button,
+[class*="panels_"] [class*="buttons__"] [role="button"] {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+    margin-left: 2px !important;
+}
+[class*="panels_"] [class*="buttons__"] button:hover,
+[class*="panels_"] [class*="buttons__"] [role="button"]:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+[class*="panels_"] [class*="buttons__"] button:active {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+}
+[class*="panels_"] svg {
+    color: #000000 !important;
+}
+/* avatar quadrado com moldura de campo, como icone de barra de status */
+[class*="panels_"] [class*="avatar"] {
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+}
+/* nome do usuario legivel, sem truncar cedo demais */
+[class*="panels_"] [class*="nameTag_"],
+[class*="panels_"] [class*="nameTag_"] * {
+    color: #000000 !important;
+    font-weight: 700 !important;
+}
+
+/* ============================================================
+   COLUNA ESQUERDA COMO UM PAINEL SO
+   o midnight documenta .sidebar__5e434 como o grupo
+   "server list + channel list + user panel". uso ele como container
+   unico: uma moldura em volta dos tres, com divisorias internas.
+   "sidebar__" com dois underscores nao casa com sidebarList__ nem
+   com sidebarRegionScroller__, entao mira so no grupo.
+   ============================================================ */
+[class*="sidebar__"] {
+    border: 1px solid #7f9db9 !important;
+    box-sizing: border-box !important;
+    background: var(--xp-face) !important;
+    overflow: hidden !important;
+}
+/* o rail deixa de encostar na barra de menu */
+[class*="guilds_"] {
+    padding-top: 4px !important;
+    border-right: none !important;
+}
+
+/* ============================================================
+   AVATARES E STATUS NO ESTILO MSN/XP
+   o anel do RadialStatus vira a MOLDURA do avatar quadrado em vez de
+   disputar espaco com ele: --rs-avatar-shape aceita 0% para quadrado.
+   as cores vao para a paleta do XP.
+   ============================================================ */
+:root {
+    --rs-avatar-shape: 3px; /* leve, como os cantos do XP; 0 fica duro demais */
+
+    --rs-online-color: #3c9f3c;
+    --rs-idle-color: #e8a200;
+    --rs-dnd-color: #c73207;
+    --rs-offline-color: #aca899;
+    --rs-streaming-color: #7b4fbf;
+    --rs-invisible-color: #aca899;
+    --rs-self-speaking-color: #3c9f3c;
+    --rs-phone-color: var(--rs-online-color);
+    /* espessura/afastamento do anel ficam na secao (D), mais abaixo */
+}
+
+/* avatar de mensagem nao tem anel de status, entao ganha moldura de
+   campo pra nao ficar "solto". border-box mantem o tamanho. */
+[class*="message_"] img[class*="avatar"],
+[class*="cozyMessage"] img[class*="avatar"] {
+    border: 1px solid var(--xp-shadow) !important;
+    box-sizing: border-box !important;
+}
+
+/* ============================================================
+   BOTOES PRIMARIOS, TOOLTIPS E POPOUTS
+   o "Editar perfil" azul vem do .colorBrand__201d5, que usa os tokens
+   --control-primary-*. troco os tokens (pega em todo lugar) e por cima
+   dou o gradiente de botao nas classes de botao propriamente ditas.
+   ============================================================ */
+body,
+.theme-dark:not(.custom-user-profile-theme),
+.theme-light:not(.custom-user-profile-theme) {
+    --control-primary-background-default: #ece9d8;
+    --control-primary-background-hover: #f5f3e8;
+    --control-primary-background-active: #d8d0c4;
+    --control-primary-border-default: #003c74;
+    --control-primary-border-hover: #003c74;
+    --control-primary-border-active: #003c74;
+    --control-primary-text-default: #000000;
+    --control-primary-text-hover: #000000;
+    --control-primary-text-active: #000000;
+    --control-primary-icon-default: #000000;
+    --control-primary-icon-hover: #000000;
+}
+
+[class*="colorBrand"],
+[class*="lookFilled_"] {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    color: #000000 !important;
+    border-radius: 3px !important;
+}
+[class*="colorBrand"]:hover,
+[class*="lookFilled_"]:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+[class*="colorBrand"]:active,
+[class*="lookFilled_"]:active {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+}
+
+/* tooltip amarelo classico do Windows */
+[class*="tooltip_"] {
+    background: #ffffe1 !important;
+    border: 1px solid #000000 !important;
+    border-radius: 0 !important;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25) !important;
+    color: #000000 !important;
+    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+}
+[class*="tooltip_"] * {
+    color: #000000 !important;
+}
+/* a setinha do tooltip nao combina com o do Windows */
+[class*="tooltipPointer_"] {
+    display: none !important;
+}
+
+/* popouts e modais como janela do XP: moldura e sombra projetada */
+[class*="popout_"],
+[class*="modal_"] {
+    border: 1px solid #919b9c !important;
+    border-radius: 0 !important;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ============================================================
+   AVATARES: CANTO LEVEMENTE ARREDONDADO E O BANNER DO PERFIL
+   o Luna arredonda de leve em tudo (botao do XP.css usa 3px);
+   quadrado cru destoa. e o cartao de perfil recorta um circulo no
+   banner com mask-image apontando para um SVG do proprio Discord
+   (.avatarMasked_*, .mask__2ae2d) - isso e SEPARADO da mascara de
+   foreignObject que eu ja tinha tirado, e e o que estava quebrando
+   o conjunto avatar + banner.
+   ============================================================ */
+img[class*="avatar"],
+[class*="avatarStack"] img,
+[class*="avatar_"],
+[class*="avatarWrapper"],
+[class*="avatarBorder"],
+[class*="avatarMasked"],
+foreignObject {
+    border-radius: 3px !important;
+}
+
+/* NAO tirar mask-image aqui: e com a mascara do avatar que o
+   RadialStatus recorta o anel de presenca. Quem deixa o avatar
+   quadrado e o --rs-avatar-shape do proprio RadialStatus. */
+
+/* ============================================================
+   (A) SEPARADOR DO HEADER DA CONVERSA
+   .divider__9293f e uma barra de 1px em --border-subtle, que no
+   nosso fundo creme sai branca e chapada. XP nunca usa linha
+   simples: o separador de toolbar e um sulco de 2px (sombra +
+   luz).
+   ============================================================ */
+[class*="upperContainer_"] [class*="divider__"] {
+    display: none !important;
+}
+
+/* ============================================================
+   (B) AREA DO USUARIO REORGANIZADA EM DUAS LINHAS
+   o .container__37e49 e uma unica linha flex com
+   container-type: inline-size. na largura da nossa sidebar o
+   nome e o status sobram ~40px e viram "Lu... / Disp...".
+   solucao: deixar a linha quebrar - identidade em cima,
+   botoes embaixo, como uma barra de status do XP.
+   ============================================================ */
+[class*="panels_"] [class*="container__"] {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    min-height: 0 !important;
+    row-gap: 4px !important;
+    justify-content: flex-start !important;
+    padding: 2px !important;
+}
+/* linha 1: avatar + nome + status, ocupando a largura toda */
+[class*="panels_"] [class*="accountPopoutButtonWrapper_"] {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+    margin-inline-start: 0 !important;
+    padding: 2px 3px !important;
+    gap: 5px !important;
+}
+/* o container query do Discord esconde o nome abaixo de 100px;
+   com a quebra acima sempre ha espaco, entao forco de volta */
+[class*="panels_"] [class*="nameTag_"] {
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+}
+[class*="panels_"] [class*="panelTitleContainer_"],
+[class*="panels_"] [class*="panelSubtextContainer_"] {
+    max-width: 100% !important;
+}
+[class*="panels_"] [class*="panelSubtextContainer_"] {
+    color: #4a4a4a !important;
+    font-size: 10px !important;
+}
+/* linha 2: mic, fone e engrenagem como toolbar, alinhados a esquerda */
+[class*="panels_"] [class*="buttons__"] {
+    flex: 1 1 100% !important;
+    justify-content: flex-start !important;
+    gap: 2px !important;
+    padding: 0 1px 1px !important;
+}
+[class*="panels_"] [class*="buttons__"] > * {
+    flex: 0 0 auto !important;
+}
+/* hover do bloco de identidade no azul de selecao do XP */
+[class*="panels_"] [class*="accountPopoutButtonWrapper_"]:hover {
+    background: var(--xp-select) !important;
+}
+[class*="panels_"] [class*="accountPopoutButtonWrapper_"]:hover [class*="nameTag_"],
+[class*="panels_"] [class*="accountPopoutButtonWrapper_"]:hover [class*="nameTag_"] *,
+[class*="panels_"] [class*="accountPopoutButtonWrapper_"]:hover [class*="panelSubtextContainer_"] {
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   (C) CARTAO DE PERFIL: BANNER E FUNDO
+   .user-profile-popout e .user-profile-modal-v2 sao classes
+   sem hash (o Discord as usa como escopo de tema), entao dao
+   um gancho estavel. o banner vira a faixa de titulo Luna e o
+   corpo do cartao vira o creme padrao.
+   ============================================================ */
+.user-profile-popout,
+.user-profile-modal-v2,
+.custom-user-profile-theme {
+    --profile-gradient-start: var(--xp-face);
+    --profile-gradient-end: var(--xp-face);
+    --profile-gradient-primary-color: var(--xp-face);
+    --profile-gradient-secondary-color: var(--xp-face-dark);
+    --profile-gradient-overlay-color: transparent;
+    --profile-gradient-modal-background-color: var(--xp-face);
+    --profile-gradient-section-box: #ffffff;
+    --profile-gradient-note-background: #ffffff;
+    --profile-gradient-button-color: var(--xp-face);
+    --profile-gradient-role-pill-background: var(--xp-face-dark);
+    --profile-gradient-role-pill-border: var(--xp-shadow);
+    --custom-user-profile-banner-radius: 0;
+}
+/* O CIRCULO BRANCO: nao era o avatar. O banner do cartao abre um
+   furo circular de ~92px com mask, para a foto redonda "encaixar"
+   nele. Com avatar quadrado o furo sobra em volta e aparece como
+   um anel branco (o fundo do cartao vazando por baixo do banner).
+   Tirando a mask, o banner volta a ser um retangulo inteiro e o
+   avatar quadrado so encosta por cima. A cor do banner NAO muda -
+   ela e do usuario. */
+.user-profile-popout [class*="banner_"],
+.user-profile-popout [class*="banner_"] *,
+.user-profile-modal-v2 [class*="banner_"],
+.user-profile-modal-v2 [class*="banner_"] *,
+.user-profile-sidebar [class*="banner_"],
+.user-profile-sidebar [class*="banner_"] * {
+    -webkit-mask: none !important;
+    mask: none !important;
+    border-radius: 0 !important;
+}
+
+/* ============================================================
+   (D) PRESENCA
+   o RadialStatus desenha um anel em volta do avatar. com o
+   avatar quase quadrado o anel afastado fica estranho, entao
+   colo ele no avatar: vira uma moldura colorida, que e como o
+   MSN marcava o contato. se preferir o selo classico no canto,
+   basta desativar o RadialStatus no Vencord.
+   ============================================================ */
+:root {
+    --rs-small-spacing: 2px;
+    --rs-medium-spacing: 3px;
+    --rs-large-spacing: 4px;
+    --rs-small-width: 2px;
+    --rs-medium-width: 3px;
+    --rs-large-width: 4px;
+}
+/* ============================================================
+   (E) TELA DE CONFIGURACOES  -  Painel de Controle do XP
+
+   ATENCAO: a barra lateral das configuracoes NAO e mais o
+   TabBar antigo (.side_aa8da2 .item_aa8da2) que o midnight
+   ainda estiliza. Inspecionando o DOM desta build:
+
+     .standardSidebarView__23e6b  view inteira
+       .sidebar__23e6b            coluna esquerda
+         .itemContainer_caf372    item de 1o nivel ("Conta")
+           .item_caf372  .itemContent_caf372  .icon_caf372
+         .subnav_e4d939           lista de sub-itens
+           .item_e4d939 / .active_e4d939
+           .track_e4d939 / .thumb_e4d939   (a barrinha da esquerda)
+         .section__409aa          grupo ("Vencord Settings")
+           .sectionLabel__409aa
+       .contentRegion__23e6b  >  .contentColumn__23e6b
+
+   OBS: a sidebar NAO fica dentro de .standardSidebarView nesta
+   build, entao os itens sao ancorados nos data-attributes
+   [data-settings-sidebar-item] e [data-list-item-id], que sao
+   semanticos e nao mudam de hash a cada release.
+   ============================================================ */
+
+/* fundo geral: creme do XP, sem gradiente */
+[class*="standardSidebarView"],
+[class*="standardSidebarView"] [class*="contentRegion"],
+[class*="contentColumn_"] {
+    background: var(--xp-face) !important;
+    backdrop-filter: none !important;
+}
+
+/* coluna esquerda como lista do Explorer: branca e afundada */
+[class*="sidebar__"]:has([data-settings-sidebar-item]) {
+    background: #ffffff !important;
+}
+[class*="sidebarRegionScroller"] {
+    border-right: 1px solid var(--xp-shadow) !important;
+}
+
+/* --- itens de 1o nivel (Conta, Notificacoes, Vencord...) --- */
+[data-settings-sidebar-item] > [role="link"] {
+    border-radius: 0 !important;
+    padding: 3px 8px !important;
+    color: #000000 !important;
+    font-size: 11px !important;
+    transition: none !important;
+}
+[data-settings-sidebar-item] [class*="itemContent_"] {
+    font-size: 11px !important;
+    gap: 6px !important;
+}
+[data-settings-sidebar-item] [class*="itemContent_"] > svg {
+    width: 16px !important;
+    height: 16px !important;
+    color: #000000 !important;
+}
+[data-settings-sidebar-item] > [role="link"]:hover {
+    background: #d8e4f8 !important;
+    color: #000000 !important;
+}
+[data-settings-sidebar-item] > [role="link"][aria-current="page"],
+[data-settings-sidebar-item] > [class*="active_"] {
+    background: var(--xp-select) !important;
+    color: #ffffff !important;
+}
+[data-settings-sidebar-item] > [role="link"][aria-current="page"] svg,
+[data-settings-sidebar-item] > [class*="active_"] svg {
+    color: #ffffff !important;
+}
+
+/* --- sub-itens (Informacoes da conta, Senha e seguranca...) --- */
+[class*="subnav_"] [class*="item_"] {
+    font-size: 11px !important;
+    line-height: 16px !important;
+    color: #000000 !important;
+    padding: 2px 8px !important;
+    border-radius: 0 !important;
+}
+[class*="subnav_"] [class*="item_"]:hover {
+    background: #d8e4f8 !important;
+    color: #000000 !important;
+}
+[class*="subnav_"] [class*="item_"][class*="active_"] {
+    background: var(--xp-select) !important;
+    color: #ffffff !important;
+}
+/* a trilha vertical vira o sulco cinza do XP e o marcador, azul solido */
+[class*="subnav_"] [class*="track_"] {
+    background: var(--xp-shadow) !important;
+    border-radius: 0 !important;
+}
+[class*="subnav_"] [class*="thumb_"] {
+    background: var(--xp-select) !important;
+    border-radius: 0 !important;
+}
+[class*="subnav_"] {
+    row-gap: 0 !important;
+    padding: 1px 0 2px !important;
+}
+
+/* --- cabecalhos de grupo: azul XP, como titulo de categoria --- */
+[class*="sectionLabel__"],
+[class*="sectionLabel__"] h3 {
+    color: #0046d5 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    padding: 6px 8px 2px !important;
+}
+
+/* --- conteudo da direita --- */
+/* menos ar: o padrao usa 60px em cima e 40px nas laterais */
+[class*="contentColumn_"] {
+    padding: 16px 20px 40px !important;
+}
+[class*="contentColumn_"] h1,
+[class*="contentColumn_"] h2 {
+    color: #0046d5 !important;
+    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+}
+/* linhas divisorias como sulco XP em vez de fio branco */
+[class*="contentColumn_"] [class*="divider_"] {
+    background: linear-gradient(180deg, var(--xp-shadow) 50%, var(--xp-light) 50%) !important;
+    border: none !important;
+    height: 2px !important;
+}
+/* campos de texto afundados */
+[class*="contentColumn_"] input[type="text"],
+[class*="contentColumn_"] input[type="password"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px var(--xp-shadow) !important;
+    color: #000000 !important;
+}
+/* a caixa de busca da barra lateral tambem */
+[class*="sidebarRegionScroller"] [class*="searchBar_"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px var(--xp-shadow) !important;
+}
+
+/* o TabBar antigo (.side_aa8da2) ainda e usado nas configuracoes
+   de SERVIDOR, entao vale manter o tratamento - mas sem pegar o
+   .aside_f58343, que e outro painel. */
+[class*="side_"]:not([class*="aside_"]) [class*="item_"] {
+    border-radius: 0 !important;
+    transition: none !important;
+}
+
+/* ============================================================
+   (F) TELA DE AMIGOS  -  lista do Explorer
+
+   Estrutura real (lida por CDP no DOM vivo):
+     .children__9293f            <- as abas ficam DENTRO do header
+       .tabBar__133bf.topPill_aa8da2
+         .item__133bf            Disponivel / Todos
+         .addFriend__133bf       Adicionar amigo
+     .container__133bf > .tabBody__133bf
+       .peopleColumn__133bf      painel da lista (role=tabpanel)
+         .searchBar__5ec2f > .wrapper__72c38  campo de busca
+         h2.title__1472a         "Online - 5"
+         .peopleListItem_cc6179  (altura fixa inline, lista
+            virtualizada - NAO mexer em height/position)
+           .rowButton_cc6179     overlay clicavel
+           .rowContent_cc6179 > .listItemContents_fc004c
+              .userInfo__0a06e  +  .actions_fc004c
+         .divider_cc6179
+       .nowPlayingColumn__133bf  coluna "Ativo agora"
+
+   peopleColumn__ e peopleListItem_ sao unicos no bundle, entao
+   escopo tudo neles.
+   ============================================================ */
+
+/* o painel vira uma lista branca afundada, como o Explorer */
+[class*="peopleColumn__"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    box-shadow: inset 1px 1px var(--xp-shadow), inset -1px -1px var(--xp-light) !important;
+    padding: 0 !important;
+}
+/* (unificado com o bloco COLUNA DA DIREITA, mais abaixo) */
+
+/* --- busca: campo afundado, sem cantos --- */
+[class*="peopleColumn__"] [class*="searchBar__"] {
+    background: var(--xp-face) !important;
+    border-bottom: 1px solid var(--xp-shadow) !important;
+    padding: 5px 6px !important;
+}
+[class*="peopleColumn__"] [class*="searchBar__"] [class*="wrapper__"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px var(--xp-shadow) !important;
+    min-height: 20px !important;
+}
+[class*="peopleColumn__"] input {
+    color: #000000 !important;
+    font-size: 11px !important;
+}
+
+/* --- "Online - 5" vira cabecalho de coluna do Explorer --- */
+[class*="peopleColumn__"] h2 {
+    background: linear-gradient(180deg, #ffffff, #f1efe2 60%, #e4e1d1) !important;
+    border-top: 1px solid var(--xp-light) !important;
+    border-bottom: 1px solid var(--xp-shadow) !important;
+    color: #000000 !important;
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    padding: 3px 8px !important;
+    margin: 0 !important;
+}
+
+/* --- linhas ---
+   a lista e virtualizada e cada linha tem height inline, entao
+   aqui so entra cor: nada de height, position ou margin. */
+[class*="peopleListItem_"] [class*="rowContent_"],
+[class*="peopleListItem_"] [class*="rowButton_"] {
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+[class*="peopleListItem_"]:hover [class*="rowContent_"] {
+    background: #d8e4f8 !important;
+}
+[class*="peopleListItem_"]:active [class*="rowContent_"] {
+    background: var(--xp-select) !important;
+}
+[class*="peopleListItem_"]:active [class*="username__"],
+[class*="peopleListItem_"]:active [class*="subtext__"],
+[class*="peopleListItem_"]:active [class*="subtext__"] * {
+    color: #ffffff !important;
+}
+/* nome em preto normal, apelido/status em cinza - hierarquia do XP */
+[class*="peopleColumn__"] [class*="username__"] {
+    color: #000000 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+}
+[class*="peopleColumn__"] [class*="discriminator__"],
+[class*="peopleColumn__"] [class*="subtext__"],
+[class*="peopleColumn__"] [class*="subtext__"] * {
+    color: #4a4a4a !important;
+    font-size: 11px !important;
+}
+
+/* divisorias quase invisiveis: o Explorer nao separa linha por linha */
+[class*="peopleColumn__"] [class*="divider_"] {
+    background: #e8e6da !important;
+    height: 1px !important;
+}
+
+/* --- botoes de acao da linha (conversa / mais) como botao XP --- */
+[class*="peopleColumn__"] [class*="actionButton_"] {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+    margin-left: 3px !important;
+}
+[class*="peopleColumn__"] [class*="actionButton_"]:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+[class*="peopleColumn__"] [class*="actionButton_"]:active {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+}
+[class*="peopleColumn__"] [class*="actionButton_"] svg {
+    color: #000000 !important;
+}
+
+/* ============================================================
+   ABAS DA TELA DE AMIGOS  (Disponivel / Todos / Adicionar amigo)
+   elas moram no header da conversa, mas nao sao tabs de janela -
+   sao a barra de ferramentas da tela. Entao viram botoes XP, com
+   a selecionada afundada, em vez de pilulas.
+   Ela tambem tem a classe .topPill_aa8da2, o que da um alvo por
+   classe - :has() com argumento descendente custa ~80ms por mutacao
+   no DOM (medido), entao nao entra em nada que fique sempre ligado.
+
+   Mesma historia na barra de titulo: ela e ancorada em
+   [data-window-chrome="true"]. Existem DUAS .bar_c38106 no DOM - a
+   .systemBar_ fica display:none e a visivel so tem .bar_. O
+   data-attribute distingue as duas sem :has() e sem depender de hash.
+   ============================================================ */
+[class*="tabBar__"][class*="topPill_"] {
+    gap: 3px !important;
+    align-self: center !important;
+}
+[class*="tabBar__"][class*="topPill_"] > [class*="item_"] {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+    min-height: 20px !important;
+    margin: 0 !important;
+    padding: 2px 10px !important;
+    transition: none !important;
+}
+[class*="tabBar__"][class*="topPill_"] > [class*="item_"] [class*="itemText_"] {
+    color: #000000 !important;
+    font-size: 11px !important;
+}
+[class*="tabBar__"][class*="topPill_"] > [class*="item_"]:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+/* a aba ativa fica afundada, como botao de toolbar pressionado */
+[class*="tabBar__"][class*="topPill_"] > [class*="item_"][aria-selected="true"] {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+    box-shadow: inset 1px 1px var(--xp-shadow) !important;
+}
+/* o topPill_ do Discord desenha um :after de sublinhado - fora */
+[class*="tabBar__"][class*="topPill_"] > [class*="item_"]::after {
+    display: none !important;
+}
+
+/* --- coluna "Ativo agora": cada cartao vira um groupbox do XP --- */
+/* (unificado com o bloco COLUNA DA DIREITA, mais abaixo) */
+[class*="nowPlayingColumn__"] [class*="itemCard__"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin-bottom: 6px !important;
+}
+[class*="nowPlayingColumn__"] [class*="itemCard__"] [class*="inset_"],
+[class*="nowPlayingColumn__"] [class*="itemCard__"] [class*="section__"] {
+    background: transparent !important;
+    border-radius: 0 !important;
+}
+[class*="nowPlayingColumn__"] [class*="itemCard__"]:hover {
+    background: #d8e4f8 !important;
+}
+[class*="nowPlayingColumn__"] button {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+}
+[class*="nowPlayingColumn__"] button:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+[class*="nowPlayingColumn__"] button * {
+    color: #000000 !important;
+}
+
+/* ============================================================
+   (G) CONSISTENCIA ENTRE AS TELAS
+
+   O header tinha aba so em canal de servidor e DM 1:1. Motivo
+   (lido no DOM vivo): a regra da aba estava presa a
+   [class*="subtitleContainer_"], um nome de classe que esta build
+   nem usa mais (0 elementos no DOM). As outras telas usam a mesma estrutura, mas com nomes
+   diferentes para o titulo:
+
+     canal / DM 1:1 / Amigos : .titleWrapper__9293f
+     grupo (GDM)             : .hoverableContainer__754bd
+
+   O ancestral comum de todas e .upperContainer__9293f. Ancorando
+   nele, a aba passa a valer nas quatro telas.
+   ============================================================ */
+/* Em canal/DM/grupo o icone (#, avatar, icone do grupo) e IRMAO do
+   titulo, nao filho - por isso ele ficava para fora da aba e parecia
+   quebrado. A aba passa a ser o .children_ inteiro, que embrulha os dois.
+   Em Amigos o .children_ tambem carrega os botoes (Disponivel/Todos/...),
+   entao la a aba continua so no titulo. */
+[class*="upperContainer_"] > [class*="children__"]:not([class*="scrollable__"]),
+[class*="upperContainer_"] > [class*="children__"][class*="scrollable__"] > [class*="titleWrapper_"] {
+    background: #fcfcfe !important;
+    border: 1px solid #919b9c !important;
+    border-top: 1px solid #e68b2c !important;
+    border-bottom: 1px solid transparent !important;
+    box-shadow: inset 0 2px #ffc73c !important;
+    border-radius: 3px 3px 0 0 !important;
+    padding: 0 12px 3px !important;
+    margin-bottom: 1px !important;
+    align-self: flex-end !important;
+    position: relative;
+    z-index: 8;
+}
+/* no grupo o titulo e clicavel ("Editar grupo") e traz hover proprio */
+[class*="upperContainer_"] [class*="hoverableContainer_"]:hover {
+    background: #ffffff !important;
+}
+
+/* ============================================================
+   LISTA DE MEMBROS: mesma lista de Explorer da tela de amigos
+   .membersWrap_c8ffbb > .members_c8ffbb
+     h2.membersGroup_c8ffbb    "Membros - 3"
+     .member__5d473.container__91a9d.clickable__91a9d
+   ============================================================ */
+[class*="membersWrap"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    box-sizing: border-box !important;
+}
+[class*="membersWrap"] [class*="members_"] {
+    background: transparent !important;
+}
+/* cabecalho do grupo como cabecalho de coluna */
+[class*="membersWrap"] [class*="membersGroup_"] {
+    background: linear-gradient(180deg, #ffffff, #f1efe2 60%, #e4e1d1) !important;
+    border-top: 1px solid var(--xp-light) !important;
+    border-bottom: 1px solid var(--xp-shadow) !important;
+    color: #000000 !important;
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    padding: 3px 8px !important;
+    margin: 0 !important;
+}
+/* linhas: destaque so por fundo, nunca deslocando o item */
+[class*="membersWrap"] [class*="member__"] {
+    border-radius: 0 !important;
+    margin: 0 !important;
+    transition: none !important;
+}
+[class*="membersWrap"] [class*="member__"]:hover [class*="container__"],
+[class*="membersWrap"] [class*="member__"]:hover {
+    background: #d8e4f8 !important;
+}
+[class*="membersWrap"] [class*="member__"]:active,
+[class*="membersWrap"] [class*="member__"]:active [class*="container__"] {
+    background: var(--xp-select) !important;
+}
+[class*="membersWrap"] [class*="member__"]:active [class*="name_"],
+[class*="membersWrap"] [class*="member__"]:active [class*="subText_"] {
+    color: #ffffff !important;
+}
+[class*="membersWrap"] [class*="name_"] {
+    font-size: 11px !important;
+}
+[class*="membersWrap"] [class*="subText_"] {
+    color: #4a4a4a !important;
+    font-size: 11px !important;
+}
+
+/* ============================================================
+   PAINEL DE PERFIL NA LATERAL (.user-profile-sidebar)
+   e a mesma classe sem hash que o Discord usa como escopo de
+   tema, entao serve de ancora estavel. O banner ja perde a
+   mascara circular la em cima; aqui vem o resto.
+   ============================================================ */
+.user-profile-sidebar {
+    background: var(--xp-face) !important;
+    border: 1px solid var(--xp-shadow) !important;
+    box-sizing: border-box !important;
+}
+/* [class*="section_"] e [class*="overlay"] pegavam blocos demais e
+   enchiam a coluna de caixas vazias. A moldura ja e a da coluna;
+   aqui basta tirar cantos e sombra. */
+.user-profile-sidebar [class*="Card"],
+.user-profile-sidebar [class*="card_"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.user-profile-sidebar [class*="section_"],
+.user-profile-sidebar [class*="overlay"] {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.user-profile-sidebar h1,
+.user-profile-sidebar h2,
+.user-profile-sidebar h3 {
+    color: #000000 !important;
+    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+}
+/* as molduras decorativas do perfil (aquele quadro roxo) so
+   fecham em cima de cartao arredondado - fora */
+.user-profile-sidebar [class*="profileEffect"],
+.user-profile-sidebar [class*="ProfileEffect"],
+.user-profile-sidebar [class*="frame_"],
+.user-profile-sidebar [class*="Frame_"] {
+    display: none !important;
+}
+
+/* nameplates (o cosmetico pago que pinta um degrade atras do nome
+   na lista de membros) nao tem como conversar com uma lista do
+   Explorer: e uma imagem com mask-image por cima da linha. Fora.
+   .nameplated__91a9d marca a linha; .container_df39b2 e a arte. */
+/* a arte fica sempre num filho aria-hidden com uma <img> dentro,
+   tanto na lista de membros quanto na lista de DMs */
+img[class*="img_df"],
+[class*="nameplated__"] > [aria-hidden="true"] {
+    display: none !important;
+}
+/* o degrade fica no pai, com background inline; o :has fica escopado
+   nas duas listas em vez de valer para todo [aria-hidden] do documento */
+[class*="privateChannels"] [aria-hidden="true"]:has(> img[class*="img_df"]),
+[class*="membersWrap"] [aria-hidden="true"]:has(> img[class*="img_df"]) {
+    display: none !important;
+}
+[class*="membersWrap"] [class*="nameplated__"] {
+    background: transparent !important;
+}
+
+/* ============================================================
+   (H) COLUNA DA DIREITA: UM CASCO SO PARA AS TRES TELAS
+
+   Cada tela usa um componente diferente para a coluna direita,
+   e por isso as tres estavam com cara distinta:
+
+     Amigos    .nowPlayingColumn__133bf   ("Ativo agora")
+     DM 1:1    .user-profile-sidebar      (perfil)
+     Grupo     .membersWrap_c8ffbb        ("Membros")
+
+   Aqui os tres recebem o MESMO casco: painel branco afundado,
+   e o titulo vira o mesmo cabecalho de coluna do Explorer que a
+   lista de amigos ja usa. Assim as tres telas leem igual.
+   ============================================================ */
+[class*="nowPlayingColumn__"],
+[class*="membersWrap"],
+.user-profile-sidebar {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    box-shadow: inset 1px 1px var(--xp-shadow), inset -1px -1px var(--xp-light) !important;
+    box-sizing: border-box !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+}
+
+/* cabecalho de coluna, identico nas tres (e igual ao "Online - 4") */
+[class*="nowPlayingColumn__"] > h2,
+[class*="nowPlayingColumn__"] [class*="header__"],
+[class*="membersWrap"] [class*="membersGroup_"],
+[class*="peopleColumn__"] h2 {
+    background: linear-gradient(180deg, #ffffff, #f1efe2 60%, #e4e1d1) !important;
+    border-top: 1px solid var(--xp-light) !important;
+    border-bottom: 1px solid var(--xp-shadow) !important;
+    color: #000000 !important;
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    padding: 3px 8px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* os cartoes de "Ativo agora" ficam sem moldura propria: a moldura
+   agora e a da coluna, como as linhas da lista de membros */
+[class*="nowPlayingColumn__"] [class*="itemCard__"] {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #e8e6da !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+[class*="nowPlayingColumn__"] [class*="itemCard__"]:hover {
+    background: #d8e4f8 !important;
+}
+
+/* o perfil lateral e o unico com conteudo em blocos, entao os
+   blocos viram groupbox dentro do painel branco */
+/* [class*="section_"] e [class*="overlay"] pegavam blocos demais e
+   enchiam a coluna de caixas vazias. A moldura ja e a da coluna;
+   aqui basta tirar cantos e sombra. */
+.user-profile-sidebar [class*="Card"],
+.user-profile-sidebar [class*="card_"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.user-profile-sidebar [class*="section_"],
+.user-profile-sidebar [class*="overlay"] {
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* ============================================================
+   (I) A ABA COMO CAIXA, E A TELA DE AMIGOS ENCOSTADA NELA
+   ============================================================ */
+
+/* o .children_ e flex:1 1 0 e ocupa 1543px - viraria uma aba do tamanho
+   do header. Encolhe para o conteudo e empurra a toolbar com auto. */
+[class*="upperContainer_"] > [class*="children__"]:not([class*="scrollable__"]) {
+    flex: 0 0 auto !important;
+    width: -moz-fit-content !important;
+    width: fit-content !important;
+    margin-inline-end: auto !important;
+    gap: 6px !important;
+}
+/* em Amigos a aba e so o titulo, mas o icone da tela fica solto ao lado
+   dele; sem embrulho comum nao da pra por dentro, entao sai. */
+[class*="upperContainer_"] > [class*="children__"][class*="scrollable__"] > [class*="iconWrapper_"] {
+    display: none !important;
+}
+
+/* AMIGOS: o corpo comecava 17px abaixo do header, entao a aba ficava
+   boiando em vez de encostar no painel, como acontece no chat. */
+[class*="container__133bf"],
+[class*="tabBody__133bf"] {
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: var(--gap, 8px) !important;
+    background: transparent !important;
+}
+/* o painel da lista assume o papel do .chatContent_: e nele que a aba encosta */
+[class*="peopleColumn__"] {
+    border: 1px solid #919b9c !important;
+    box-shadow:
+        inset 1px 1px #fcfcfe,
+        inset -1px -1px #fcfcfe,
+        1px 2px 2px 0 rgba(208, 206, 191, .75) !important;
+}
+
+/* O status de atividade ("Em voz", "Jogando X") e irmao do titulo
+   dentro do .children_, entao virava conteudo da aba e deixava ela
+   larga e baguncada. A aba fica so com a identidade da conversa,
+   como nas outras telas. A mesma informacao continua na lista de
+   DMs e no painel de perfil. */
+[class*="upperContainer_"] [class*="dmHeaderActivityStatus"] {
+    display: none !important;
+}
+
+/* o separador (um pontinho) entre o titulo e os botoes da tela de Amigos */
+[class*="upperContainer_"] > [class*="children__"][class*="scrollable__"] > svg {
+    display: none !important;
+}
+
+/* ============================================================
+   (J) ABA MENOR, LISTA DE DMs, PAINEL DE PERFIL E MARKDOWN
+   ============================================================ */
+
+/* --- (4) a aba estava com 40px porque herdava height:100% do header.
+       Aba de XP tem ~23px. O height:100% fica so no upperContainer_,
+       que precisa dele para o alinhamento no rodape funcionar. --- */
+[class*="upperContainer_"] > [class*="children__"]:not([class*="scrollable__"]),
+[class*="upperContainer_"] > [class*="children__"][class*="scrollable__"] > [class*="titleWrapper_"] {
+    height: 26px !important;
+    min-height: 0 !important;
+    padding: 0 12px !important;
+    font-size: 12px !important;
+    align-self: flex-end !important;
+    /* centrado: o flex-end do header jogava o texto pro rodape da aba */
+    align-items: center !important;
+    display: flex !important;
+}
+[class*="upperContainer_"] > [class*="children__"] h1,
+[class*="upperContainer_"] > [class*="children__"] [class*="title__"] {
+    font-size: 12px !important;
+    line-height: 1 !important;
+}
+/* o icone dentro da aba acompanha a altura nova */
+[class*="upperContainer_"] > [class*="children__"] [class*="wrapper__44b0c"],
+[class*="upperContainer_"] > [class*="children__"] [class*="channelIcon_"] svg,
+[class*="upperContainer_"] > [class*="children__"] [class*="gdmIcon_"] {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+/* --- (2) hover e selecionado da lista de DMs/canais
+       O padrao do Discord usa --interactive-background-* (degrade
+       translucido) e um X com backdrop-filter: blur(). Nada disso
+       existe no XP: destaque e retangulo chapado, e blur ainda
+       custa paint. --- */
+[class*="interactive__"] {
+    border-radius: 0 !important;
+    transition: none !important;
+}
+[class*="interactive__"]:hover {
+    background: #d8e4f8 !important;
+}
+[class*="interactive__"]:active,
+[class*="interactiveSelected__"] {
+    background: var(--xp-select) !important;
+    color: #ffffff !important;
+}
+[class*="interactiveSelected__"] [class*="name_"],
+[class*="interactiveSelected__"] [class*="subText_"],
+[class*="interactiveSelected__"] [class*="activityStatusText_"],
+[class*="interactiveSelected__"] [class*="link__"] {
+    color: #ffffff !important;
+}
+/* o X de fechar conversa: quadradinho de titlebar, sem blur nem circulo */
+[class*="privateChannels"] [class*="closeButton__"] [class*="innerCloseButton"] {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: transparent !important;
+    border-radius: 0 !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+}
+[class*="privateChannels"] [class*="closeButton__"]:hover [class*="innerCloseButton"] {
+    background: #c75050 !important;
+    color: #ffffff !important;
+}
+
+/* --- (3) painel de perfil lateral --- */
+/* faixa do banner ganha o fecho de baixo, senao a cor sangra no branco */
+.user-profile-sidebar [class*="banner_"] {
+    border-bottom: 1px solid var(--xp-shadow) !important;
+}
+/* o avatar sobre o banner com moldura de campo, como no MSN */
+.user-profile-sidebar [class*="avatar__"] [class*="wrapper__44b0c"] {
+    border: 1px solid var(--xp-shadow) !important;
+    background: #ffffff !important;
+}
+/* os dois botoes de acao no canto do banner viram botao XP */
+.user-profile-sidebar [role="button"][class*="button"],
+.user-profile-sidebar button {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+}
+.user-profile-sidebar button:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+.user-profile-sidebar button svg,
+.user-profile-sidebar button * {
+    color: #000000 !important;
+}
+/* rotulos das secoes ("Membro desde", "Lista de desejos") como titulo XP */
+.user-profile-sidebar h2,
+.user-profile-sidebar h3 {
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #0046d5 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+
+/* ============================================================
+   (K) MARKDOWN: BLOCO DE CODIGO, QUOTE E SPOILER
+   classes reais do bundle:
+     pre > code.codeBlockText_ada32f     bloco
+     code.inlineCode_ada32f              inline
+     .blockquoteContainer__75297 + .blockquoteDivider__75297
+     .spoilerText__80bf8 > .spoilerContent__80bf8
+   ============================================================ */
+
+/* bloco de codigo: caixa afundada, como um campo de texto do XP */
+[class*="markup"] pre,
+[class*="messageContent"] pre {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px var(--xp-shadow), inset -1px -1px var(--xp-light) !important;
+    padding: 6px 8px !important;
+}
+[class*="codeBlockText_"],
+[class*="markup"] pre code {
+    background: transparent !important;
+    border: none !important;
+    color: #000000 !important;
+    font-family: 'Lucida Console', 'Courier New', monospace !important;
+    font-size: 11px !important;
+    line-height: 15px !important;
+}
+[class*="codeBlockLang_"] {
+    color: #4a4a4a !important;
+    font: 700 10px Tahoma, sans-serif !important;
+}
+
+/* codigo inline: relevo leve, sem virar bloco */
+code.inline,
+[class*="inlineCode"] {
+    /* nesta build a classe e so "inline", sem hash - [class*="inlineCode"]
+       nao casava, e o creme que aparecia vinha do midnight usando as
+       minhas variaveis. code.inline e tag+classe: preciso e barato.
+       O fundo do chat ja e creme (#efefe2); codigo tambem creme sumia.
+       Campo branco afundado e o que o XP usa pra "conteudo literal". */
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px #d9d5c8 !important;
+    color: #000080 !important;
+    font-family: 'Lucida Console', 'Courier New', monospace !important;
+    font-size: 11px !important;
+    padding: 0 4px !important;
+}
+
+/* citacao: barra azul a esquerda, como o Outlook Express fazia */
+[class*="blockquoteContainer__"] {
+    background: #f7f6f0 !important;
+    border: 1px solid #e3e1d5 !important;
+    border-radius: 0 !important;
+    padding: 2px 8px 2px 0 !important;
+}
+[class*="blockquoteDivider__"] {
+    background: var(--xp-select) !important;
+    border-radius: 0 !important;
+    width: 3px !important;
+    margin-inline-end: 8px !important;
+}
+
+/* spoiler: retangulo cinza chapado, nada de cantos nem animacao.
+   Nesta build o elemento e <span class="obscured spoilerContent__299eb
+   hidden__299eb" aria-expanded="false">. A classe "obscured" nao tem
+   hash e o aria-expanded diz se esta coberto - dois ancoras estaveis,
+   melhor que o .spoilerText__ que eu tinha chutado do bundle. */
+[class*="spoilerContent__"][aria-expanded="false"] {
+    /* bloco solido, como uma area selecionada e invertida do XP.
+       Sem color:transparent - quem esconde o texto e o proprio
+       Discord; forcar isso apagava texto vizinho. */
+    background: #4a4a4a !important;
+    border: 1px solid #2b2b2b !important;
+    border-radius: 0 !important;
+}
+[class*="spoilerContent__"][aria-expanded="false"]:hover {
+    background: #5e5e5e !important;
+}
+[class*="spoilerContent__"][aria-expanded="true"] {
+    background: transparent !important;
+    border-color: transparent !important;
+}
+[class*="spoilerContent__"] {
+    border-radius: 0 !important;
+}
+
+/* ============================================================
+   (L) BLOCO DE CODIGO DO SHIKI, SPOILER REVELADO E A EMENDA
+       ENTRE HEADER E CHAT
+   ============================================================ */
+
+/* O bloco de codigo real nao e o <pre> do Discord: e o plugin
+   ShikiCodeblocks do Vencord (.vc-shiki-*), que pinta cada token
+   com style inline. O tema estava no dark-plus (texto #d4d4d4),
+   ilegivel no nosso fundo claro - troquei para light-plus nas
+   configuracoes do plugin. Aqui vai so a moldura XP. */
+.vc-shiki-root,
+pre:has(> .vc-shiki-root),
+pre:has(> code.vc-shiki-code) {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px #d9d5c8, inset -1px -1px var(--xp-light) !important;
+}
+.vc-shiki-code,
+.vc-shiki-table-cell {
+    font-family: 'Lucida Console', 'Courier New', monospace !important;
+    font-size: 11px !important;
+    line-height: 15px !important;
+}
+/* a coluna de numeros vira a calha cinza do editor */
+.vc-shiki-table-row > .vc-shiki-table-cell:first-child {
+    background: var(--xp-face) !important;
+    border-right: 1px solid var(--xp-shadow) !important;
+    color: #808080 !important;
+}
+/* a barra do topo (linguagem + botoes) como barra de ferramentas XP */
+.vc-shiki-lang {
+    background: linear-gradient(180deg, #ffffff, #f1efe2 60%, #e4e1d1) !important;
+    border-bottom: 1px solid var(--xp-shadow) !important;
+    color: #000000 !important;
+    font: 700 10px Tahoma, sans-serif !important;
+}
+.vc-shiki-btn {
+    border: 1px solid var(--xp-frame-dark) !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+}
+.vc-shiki-btn:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+
+/* spoiler revelado com marca leve, pra ainda dar pra ver que era um */
+[class*="spoilerContent__"][aria-expanded="true"] {
+    background: #fff8dc !important;
+    border: 1px solid #e8dfb0 !important;
+    border-radius: 0 !important;
+}
+
+/* --- emenda header/chat ---
+   Sobravam 7px entre o rodape do header e o topo do painel do chat
+   (o --gap do midnight). Com a aba encostada, esse respiro fazia
+   parecer duas caixas separadas. A margem negativa puxa o chat pra
+   cima; escrita em cima do --gap pra sobreviver se ele mudar. */
+section:has(> [class*="upperContainer_"]) {
+    margin-bottom: calc(-1px - var(--gap, 8px)) !important;
+}
+
+/* ============================================================
+   (M) ATIVIDADE NO PAINEL DO USUARIO E BLOCOS DO PERFIL
+   ============================================================ */
+
+/* O nome do jogo (.clickableGameName__8c6c2) e um link, nao um botao -
+   ganhava moldura de botao XP porque a regra do painel pegava todo
+   [role="button"]. Agora a regra e so da linha de botoes; aqui so
+   garanto que a atividade fique como texto. */
+[class*="panels_"] [class*="clickableGameName"],
+[class*="panels_"] [class*="gameName"],
+[class*="panels_"] [class*="gameWrapper"],
+[class*="panels_"] [class*="info__"] {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+[class*="panels_"] [class*="clickableGameName"] {
+    color: #0046d5 !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+}
+[class*="panels_"] [class*="clickableGameName"]:hover {
+    text-decoration: underline !important;
+}
+/* o bloco todo da atividade vira uma faixa de status, separada do
+   resto do painel por um fio, como as secoes da barra do XP */
+[class*="panels_"] [class*="gameWrapper"] {
+    border-bottom: 1px solid var(--xp-shadow) !important;
+    padding: 3px 4px !important;
+}
+
+/* Blocos do painel de perfil ("Em voz", "Lista de desejos", bio):
+   .outer_ab8609 vem com borda translucida do Discord, que sobre o
+   creme vira um contorno fantasma. Vira groupbox de verdade. */
+.user-profile-sidebar [class*="outer_"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* ============================================================
+   (N) BARRA DE FERRAMENTAS DO HEADER: DESABILITADO E ATIVO
+   Os icones sao todos .iconWrapper__9293f, mas so os clicaveis tem
+   role="button" - o desabilitado (.iconDisabled__9293f) ficava sem
+   moldura, sendo o unico "solto" na fileira. E o ativo
+   (.selected__9293f) ficava igual aos inativos.
+   ============================================================ */
+
+/* desabilitado: sem moldura (como os outros em repouso), so o
+   icone acinzentado com a luz branca embaixo - relevo gravado,
+   que e como o XP desenha controle inativo */
+[class*="upperContainer_"] [class*="toolbar_"] > [class*="iconDisabled_"] {
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    border-radius: 3px !important;
+    padding: 2px 5px !important;
+    margin-left: 2px !important;
+}
+[class*="upperContainer_"] [class*="toolbar_"] > [class*="iconDisabled_"] svg {
+    color: #a5a190 !important;
+    filter: drop-shadow(1px 1px 0 #ffffff) !important;
+}
+
+/* ativo/alternado: afundado e ambar, como botao de toolbar travado */
+[class*="upperContainer_"] [class*="toolbar_"] > [class*="selected_"] {
+    border: 1px solid #8e8b7c !important;
+    background: linear-gradient(180deg, #e6c887, #fbe3ab 45%, #fff2d4) !important;
+    box-shadow: inset 1px 1px #c9a24a !important;
+}
+
+/* o campo de busca fecha com a mesma borda dos outros campos */
+[class*="upperContainer_"] [class*="searchBar_"] {
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+}
+
+/* ============================================================
+   (O) A FAIXA BRANCA ATRAS DA ABA
+
+   Ao contrario do que anotei na secao (G), .subtitleContainer_
+   NAO sumiu desta build - ele so mudou de papel: agora e o
+   ENVELOPE do header (o <section> da aba mora dentro dele).
+   Algo (midnight, cujo sheet vem por @import e nao da para ler
+   por styleSheets) pintava ele de branco com borda #aca899, e
+   era essa a barra branca de ponta a ponta atras da aba: a aba
+   ficava boiando dentro de um campo, em vez de encostada no
+   painel da conversa.
+
+   Ele volta a ser so um envelope. Quem desenha e a aba (G/I/J)
+   e o .chatContent_ logo abaixo.
+   ============================================================ */
+[class*="subtitleContainer_"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* ============================================================
+   (P) A ABA ENCAIXANDO DE VERDADE NO PAINEL
+
+   Medido no DOM: o painel (.chatContent_) comeca em y=78 e a aba
+   terminava em y=86 - ela invadia 8px do painel, com as bordas
+   laterais descendo dentro da area branca. Era isso que deixava a
+   aba "colada por cima" em vez de nascer do painel.
+
+   Agora a base da aba para exatamente EM CIMA da borda de topo do
+   painel (1px de sobreposicao), que e como o XP desenha aba ativa:
+   a linha de cima do painel some sob a aba.
+   Tambem tiro o recuo de 3px do <section>, para a aba comecar na
+   mesma vertical da borda esquerda do painel.
+   ============================================================ */
+/* o recuo de 3px fica: o Lucas gostou da aba nascendo um
+   tiquinho para dentro, como no XP de verdade. */
+[class*="upperContainer_"] > [class*="children__"]:not([class*="scrollable__"]),
+[class*="upperContainer_"] > [class*="children__"][class*="scrollable__"] > [class*="titleWrapper_"] {
+    /* 8px: a base da aba cai 1px DENTRO do painel, cobrindo a
+       borda de topo dele - sem isso a linha cinza atravessa a aba */
+    margin-bottom: 8px !important;
+    /* a base fica na cor do topo do painel, fechando a emenda */
+    border-bottom: 1px solid #fcfcfe !important;
+    padding-bottom: 0 !important;
+}
+
+/* ============================================================
+   (Q) LADO DIREITO DO HEADER: ICONES + BUSCA
+
+   Estrutura real: .toolbar__9293f > N x .iconWrapper__9293f
+   + .search__49676 > .search_c322aa > .searchBar_c322aa
+
+   Estava tudo em escala de Discord: icone de 20px dentro de uma
+   caixa de 32px e campo de busca de 32px de altura. Barra de
+   ferramentas do XP e miuda - icone de 16px, campo de 22px - e
+   o campo e AFUNDADO, nao um retangulo de borda chapada.
+   ============================================================ */
+[class*="upperContainer_"] [class*="toolbar_"] {
+    align-items: center !important;
+    gap: 0 !important;
+}
+/* icones menores e mais juntos */
+[class*="upperContainer_"] [class*="toolbar_"] > [class*="iconWrapper_"] {
+    width: 24px !important;
+    height: 22px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 1px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+[class*="upperContainer_"] [class*="toolbar_"] > [class*="iconWrapper_"] svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+/* separador vertical antes da busca, como toolbar do Explorer */
+[class*="upperContainer_"] [class*="toolbar_"] > [class*="search__"] {
+    border-left: 1px solid var(--xp-shadow) !important;
+    box-shadow: -1px 0 var(--xp-light) !important;
+    margin-left: 6px !important;
+    padding-left: 7px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* o campo em si: afundado, 22px, Tahoma 11 */
+[class*="upperContainer_"] [class*="searchBar_"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    /* relevo afundado: escuro em cima/esquerda, luz embaixo/direita */
+    box-shadow:
+        inset 1px 1px #7f7c6e,
+        inset -1px -1px var(--xp-light) !important;
+    height: 22px !important;
+    min-height: 0 !important;
+    padding: 0 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    /* o display:flex faz o .search_ (que e block) encolher ate o
+       conteudo dentro do toolbar - sem isso o campo vira um
+       quadradinho de 42px so com a lupa */
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+[class*="upperContainer_"] [class*="search__"] > [class*="search_"] {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+}
+[class*="upperContainer_"] [class*="searchBar_"] input,
+[class*="upperContainer_"] [class*="searchBar_"] [class*="input_"] {
+    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+    height: 18px !important;
+    padding: 0 !important;
+}
+[class*="upperContainer_"] [class*="searchBar_"] svg {
+    width: 14px !important;
+    height: 14px !important;
+    color: #4a4a4a !important;
+}
+
+/* o texto da busca nao e <input>: e o editor Slate do Discord
+   (.editor__25bec), entao a fonte tem que descer por dentro dele */
+[class*="upperContainer_"] [class*="searchBar_"] [class*="editor__"],
+[class*="upperContainer_"] [class*="searchBar_"] [class*="editor__"] * {
+    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    line-height: 18px !important;
+    color: #000000 !important;
+}
+
+/* ============================================================
+   (R) O AVATAR DA ABA DE DM (o "borrao branco" do print)
+
+   Medido: .wrapper__44b0c tem 16x16, mas o <svg class="mask__44b0c">
+   dentro dele tem 25x25 e o <foreignObject> (a foto) 20x20 - o
+   Discord desenha a mascara maior de proposito e recorta pelo
+   mask. Como eu removo o mask para deixar o avatar quadrado, o
+   excedente passa a APARECER, e o <g> de 6x6 (a bolinha de status)
+   fica solto como um blob claro em cima da foto.
+
+   Na aba: a foto volta ao tamanho da caixa e o status sai (aba de
+   XP mostra icone, nao presenca - o status continua na lista).
+   ============================================================ */
+[class*="upperContainer_"] [class*="avatar_"] [class*="mask__"] {
+    width: 16px !important;
+    height: 16px !important;
+    overflow: hidden !important;
+}
+[class*="upperContainer_"] [class*="avatar_"] [class*="mask__"] > foreignObject {
+    x: 0 !important;
+    y: 0 !important;
+    width: 16px !important;
+    height: 16px !important;
+}
+[class*="upperContainer_"] [class*="avatar_"] [class*="mask__"] > g {
+    display: none !important;
+}
+
+/* ============================================================
+   (S) A BARRA DE FERRAMENTAS DESCENDO PARA DENTRO DO PAINEL
+
+   Medido: o painel comeca em y=78, mas o .toolbar_ ia de y=52 a
+   y=84 (32px de altura + margin-block 4px) - ou seja, os 6px de
+   baixo dos icones e da busca ficavam POR CIMA do painel, saindo
+   da faixa do header. A aba ja terminava certinho em 78 desde a
+   secao (P); a toolbar tinha ficado para tras.
+
+   Agora ela ancora no rodape da faixa, com a mesma folga de 9px
+   que a aba usa, e com 22px de altura - a mesma do campo de busca.
+   ============================================================ */
+[class*="upperContainer_"] [class*="toolbar_"] {
+    align-self: flex-end !important;
+    height: 22px !important;
+    min-height: 0 !important;
+    margin: 0 0 9px !important;
+    padding-left: 8px !important;
+}
+
+/* ============================================================
+   (T) BOTAO VERDE ("Entrar na chamada de voz")
+
+   No bundle ele e .lookFilled__201d5.colorGreen__201d5, pintado
+   por --control-connected-background-*. O XP nao tem botao verde:
+   acao positiva e o botao padrao da caixa de dialogo, cinza, com
+   o texto em preto. Entao ele vira botao XP como os outros - o
+   verde so voltaria a fazer sentido num tema que tivesse cor
+   semantica, o que o Luna nao tem.
+   ============================================================ */
+[class*="colorGreen"][class*="lookFilled"] {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    min-height: 23px !important;
+    height: auto !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+}
+[class*="colorGreen"][class*="lookFilled"] * {
+    color: #000000 !important;
+}
+[class*="colorGreen"][class*="lookFilled"]:hover {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+[class*="colorGreen"][class*="lookFilled"]:active {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+    box-shadow: inset 1px 1px var(--xp-shadow) !important;
+}
+
+/* --- correcao: o botao de entrar na chamada NAO e o .colorGreen_
+   antigo. Nesta build ele e .button_a22cb0.active_a22cb0, e o verde
+   vem dos tokens --control-connected-*:
+
+     .active_a22cb0{background-color:var(--control-connected-background-default);
+                    border-color:var(--control-connected-border-default);
+                    color:var(--control-connected-text-default)}
+
+   Redefinir o token pega TODO botao "conectado/positivo" do app de
+   uma vez, sem depender de hash nem de qual componente e. --- */
+:root,
+#app-mount {
+    --control-connected-background-default: #ece9d8;
+    --control-connected-background-hover:   #f6f4ea;
+    --control-connected-background-active:  #dcd8c8;
+    --control-connected-border-default:     #003c74;
+    --control-connected-border-hover:       #e5a01a;
+    --control-connected-border-active:      #003c74;
+    --control-connected-text-default:       #000000;
+    --control-connected-text-hover:         #000000;
+    --control-connected-text-active:        #000000;
+}
+
+/* ============================================================
+   (U) O COMPONENTE DE BOTAO NOVO (.button_a22cb0)
+
+   "Entrar na chamada", "Ver Perfil Completo" e companhia usam o
+   mesmo componente: button.button_ + variante (.secondary_,
+   .active_) + .hasText_. Ele so tinha ganhado borda e raio pelas
+   regras antigas - o fundo continuava transparente, a fonte em
+   16px e a caixa com 40px de altura. Botao de XP tem 23px e
+   Tahoma 11.
+
+   Ancoro em .hasText_ (so este componente tem) em vez do hash.
+   O padding real mora no .buttonChildrenWrapper_, nao no <button>.
+   ============================================================ */
+button[class*="button_"][class*="hasText_"] {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    box-shadow: none !important;
+}
+button[class*="button_"][class*="hasText_"] [class*="buttonChildrenWrapper_"] {
+    padding: 3px 12px !important;
+}
+button[class*="button_"][class*="hasText_"] [class*="buttonChildren_"],
+button[class*="button_"][class*="hasText_"] [class*="buttonChildren_"] * {
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    line-height: 15px !important;
+    color: #000000 !important;
+}
+button[class*="button_"][class*="hasText_"]:hover {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+button[class*="button_"][class*="hasText_"]:active {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+    box-shadow: inset 1px 1px var(--xp-shadow) !important;
+}
+
+/* "Ver Biografia Completa" e outro componente (.textButton__7a01b):
+   um link com cara de botao. Ele estava com a borda colada no
+   texto - so faltava respiro. */
+[class*="textButton__"] {
+    padding: 1px 7px !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
+    border-radius: 3px !important;
+}
+[class*="textButton__"] span,
+[class*="textButton__"] {
+    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+}
+[class*="textButton__"]:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+
+/* ============================================================
+   (V) HIERARQUIA DOS BOTOES: ANEL x AZUL
+
+   - .secondary_ ("Ver Perfil Completo" e afins) recebe o botao
+     PADRAO do Luna: o cinza de sempre com um anel azul por fora e
+     um respiro branco por dentro. E o "OK" da caixa de dialogo.
+   - .active_ ("Entrar na chamada") e acao principal de verdade,
+     tem que chamar atencao: gradiente azul do Luna com texto
+     branco, como a barra de titulo da janela.
+   ============================================================ */
+button[class*="button_"][class*="hasText_"][class*="secondary_"] {
+    border: 1px solid var(--xp-frame-dark) !important;
+    box-shadow:
+        inset 0 0 0 1px #ffffff,
+        0 0 0 1px #7f9db9 !important;
+    margin: 1px !important;
+}
+button[class*="button_"][class*="hasText_"][class*="secondary_"]:hover {
+    box-shadow:
+        inset 0 0 0 1px #ffffff,
+        inset 0 0 0 2px #fdd889,
+        0 0 0 1px #7f9db9 !important;
+}
+button[class*="button_"][class*="hasText_"][class*="secondary_"]:active {
+    background: linear-gradient(180deg, #cdcac3, #e3e3db 8%, #e5e5de 94%, #f2f2f1) !important;
+    box-shadow:
+        inset 1px 1px var(--xp-shadow),
+        0 0 0 1px #7f9db9 !important;
+}
+
+/* o azul do Luna: claro em cima, escuro embaixo, com a linha de
+   luz interna que a barra de titulo tambem tem */
+button[class*="button_"][class*="hasText_"][class*="active_"] {
+    background: linear-gradient(180deg, #4a9bfd 0%, #1f6fe0 48%, #0d55c4 52%, #2a7ff0 100%) !important;
+    border: 1px solid #0a3d80 !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.55) !important;
+}
+button[class*="button_"][class*="hasText_"][class*="active_"] [class*="buttonChildren_"],
+button[class*="button_"][class*="hasText_"][class*="active_"] [class*="buttonChildren_"] * {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.45) !important;
+}
+button[class*="button_"][class*="hasText_"][class*="active_"]:hover {
+    background: linear-gradient(180deg, #6bb0ff 0%, #3a86ee 48%, #1f66d6 52%, #4a97fb 100%) !important;
+    box-shadow:
+        inset 0 1px rgba(255, 255, 255, 0.7),
+        0 0 0 1px #ffc73c !important;
+}
+button[class*="button_"][class*="hasText_"][class*="active_"]:active {
+    background: linear-gradient(180deg, #0d55c4 0%, #1f6fe0 48%, #3a86ee 52%, #1f6fe0 100%) !important;
+    box-shadow: inset 1px 1px rgba(0, 0, 0, 0.35) !important;
+}
+
+/* ============================================================
+   (W) MODAIS COM CHROME DE JANELA DO XP
+
+   O modal e [role="dialog"] > .focusLock__49fc1 > .root__49fc1.
+   Ele ganha moldura de janela do Luna: borda azul de 3px, cantos
+   de cima arredondados e uma faixa de titulo de 26px desenhada
+   por ::before dentro de um padding-top - assim a faixa nao cobre
+   conteudo nenhum, ela ocupa espaco de verdade.
+
+   O botao Fechar do Discord ja nasce no canto superior direito
+   (medido: 8px de folga), entao ele cai dentro da faixa sozinho e
+   so precisa virar o X vermelho do Luna.
+   ============================================================ */
+[class*="focusLock__"] > [class*="root__"] {
+    position: relative !important;
+    border: 3px solid #0054e3 !important;
+    border-top: none !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding-top: 26px !important;
+    background: var(--xp-face) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.4) !important;
+}
+[class*="focusLock__"] > [class*="root__"]::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -3px;
+    right: -3px;
+    height: 26px;
+    border-radius: 8px 8px 0 0;
+    /* mesmo degrade da barra de titulo da janela */
+    background:
+        linear-gradient(180deg,
+            #0058ee 0%, #3d95ff 6%, #0855dd 12%,
+            #0273ec 60%, #0264d6 78%, #0250c9 91%, #003dc8 100%);
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.35);
+    z-index: 1;
+}
+/* o conteudo tem que ficar acima da faixa em empate de pintura */
+[class*="focusLock__"] > [class*="root__"] > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+/* --- botao Fechar = o X vermelho do canto da janela --- */
+/* o botao mora dentro de .modalHeaderButtons_, que e absolute e
+   tem 0x0 - posicionar o BOTAO nao adianta (ele colapsa para 2px
+   de largura, foi o que aconteceu na primeira tentativa). Quem
+   sobe para dentro da faixa e o container. */
+[class*="focusLock__"] [class*="modalHeaderButtons_"] {
+    top: -23px !important;
+    right: 6px !important;
+    left: auto !important;
+    bottom: auto !important;
+    z-index: 5 !important;
+    display: flex !important;
+    gap: 2px !important;
+}
+[class*="focusLock__"] button[aria-label="Fechar"],
+[class*="focusLock__"] button[aria-label="Close"] {
+    position: static !important;
+    flex: 0 0 auto !important;
+    width: 21px !important;
+    height: 20px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid #d43a1a !important;
+    border-radius: 0 0 3px 3px !important;
+    background: linear-gradient(180deg, #f18a72 0%, #e5563a 40%, #d8330f 60%, #f07f5f 100%) !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.5) !important;
+}
+[class*="focusLock__"] button[aria-label="Fechar"]:hover,
+[class*="focusLock__"] button[aria-label="Close"]:hover {
+    background: linear-gradient(180deg, #f8a894 0%, #f0705a 40%, #e6482c 60%, #f79a80 100%) !important;
+}
+[class*="focusLock__"] button[aria-label="Fechar"] svg,
+[class*="focusLock__"] button[aria-label="Close"] svg {
+    width: 12px !important;
+    height: 12px !important;
+    color: #ffffff !important;
+}
+
+/* --- botoes de acao so-icone (Amigo, Mais) como os da toolbar
+       do header: soltos, moldura so no hover --- */
+[class*="focusLock__"] button[class*="button_"][class*="secondary_"]:not([class*="hasText_"]):not([aria-label="Fechar"]) {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 3px !important;
+    box-shadow: none !important;
+    margin: 0 2px !important;
+}
+[class*="focusLock__"] button[class*="button_"][class*="secondary_"]:not([class*="hasText_"]):not([aria-label="Fechar"]):hover {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #fffaef, #ffe6a8 60%, #ffd25e) !important;
+}
+
+/* ============================================================
+   (X) A SEGUNDA FAMILIA DE MODAIS (a da loja / decoracoes)
+
+   Nem todo modal e .focusLock__ > .root__. O da loja e:
+     [role=dialog] > .outerContainer__8a031 > .container__8a031
+   e por isso passou batido pela secao (W) - foi a tela que o
+   Lucas viu sem janela.
+
+   Aqui o Fechar tambem nao esta num header: ele faz parte dos
+   controles flutuantes da arte (.pdpControls_, junto do coracao e
+   do compartilhar). Subo o grupo inteiro para dentro da faixa -
+   viram os botoes do canto da janela.
+   ============================================================ */
+[class*="outerContainer__"] > [class*="container__"] {
+    position: relative !important;
+    border: 3px solid #0054e3 !important;
+    border-top: none !important;
+    border-radius: 8px 8px 0 0 !important;
+    padding-top: 26px !important;
+    background: var(--xp-face) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.4) !important;
+}
+[class*="outerContainer__"] > [class*="container__"]::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -3px;
+    right: -3px;
+    height: 26px;
+    border-radius: 8px 8px 0 0;
+    background:
+        linear-gradient(180deg,
+            #0058ee 0%, #3d95ff 6%, #0855dd 12%,
+            #0273ec 60%, #0264d6 78%, #0250c9 91%, #003dc8 100%);
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.35);
+    z-index: 1;
+}
+/* sem !important o Discord devolvia position:static aqui, o
+   elemento nao criava contexto e a faixa (::before) passava por
+   cima da metade de cima dos botoes */
+[class*="outerContainer__"] > [class*="container__"] > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+/* Os controles da arte (coracao / compartilhar / fechar) NAO
+   sobem para a faixa. Tentei, e nao da: o .previewContainer_ tem
+   overflow:hidden e o .modalRoot_ overflow:clip, os dois comecando
+   exatamente onde o padding da faixa termina - qualquer coisa
+   deslocada para cima e recortada. Entao eles ficam onde o Discord
+   colocou, no canto da arte, so que com a cara dos botoes de
+   janela do Luna. */
+[class*="outerContainer__"] [class*="pdpControls_"] > * {
+    width: 21px !important;
+    height: 20px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 0 3px 3px !important;
+    border: 1px solid #1d4f9e !important;
+    background: linear-gradient(180deg, #7db1f5 0%, #3f83e0 45%, #1e63cc 55%, #6ba3ee 100%) !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.45) !important;
+}
+[class*="outerContainer__"] [class*="pdpControls_"] > * svg {
+    width: 12px !important;
+    height: 12px !important;
+    color: #ffffff !important;
+}
+
+/* --- o X vermelho vale para QUALQUER modal, nao so o de perfil --- */
+[role="dialog"] button[aria-label="Fechar"],
+[role="dialog"] button[aria-label="Close"] {
+    border: 1px solid #d43a1a !important;
+    border-radius: 0 0 3px 3px !important;
+    background: linear-gradient(180deg, #f18a72 0%, #e5563a 40%, #d8330f 60%, #f07f5f 100%) !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.5) !important;
+}
+[role="dialog"] button[aria-label="Fechar"]:hover,
+[role="dialog"] button[aria-label="Close"]:hover {
+    background: linear-gradient(180deg, #f8a894 0%, #f0705a 40%, #e6482c 60%, #f79a80 100%) !important;
+}
+[role="dialog"] button[aria-label="Fechar"] svg,
+[role="dialog"] button[aria-label="Close"] svg {
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   (Y) LOJA
+
+   A loja e uma pagina que a Discord remonta o tempo todo, entao
+   aqui eu evito de proposito qualquer regra que dependa da
+   promocao da semana. Tudo fica escopado em [class*="shop__"] /
+   [class*="shopViewWrapper"] e mira em coisas estruturais:
+   titulo de secao, cartao de produto, campo de busca.
+
+   Boa noticia estrutural: o header da loja (.headerBar__80679)
+   reaproveita .upperContainer__ / .children__ / .toolbar__, os
+   mesmos do chat - entao aba, ferramentas e busca ja herdam o
+   tratamento das secoes (I), (Q) e (S). O que falta e o conteudo.
+   ============================================================ */
+
+/* a aba da loja so tem o icone; ganha o rotulo para nao ficar
+   uma aba muda no meio das outras */
+[class*="children__"] > [class*="shopHomeLink__"]::after {
+    content: "Loja";
+    font: 700 12px Tahoma, 'Segoe UI', sans-serif;
+    color: #000000;
+    margin-left: 6px;
+}
+[class*="children__"] > [class*="shopHomeLink__"] {
+    display: flex !important;
+    align-items: center !important;
+    width: auto !important;
+}
+
+/* titulo de secao vira cabecalho de grupo do XP: pequeno, azul,
+   com a regua embaixo separando as faixas da pagina */
+[class*="shopViewWrapper"] h2 {
+    font: 700 12px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #0046d5 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    border-bottom: 1px solid var(--xp-shadow) !important;
+    box-shadow: 0 1px var(--xp-light) !important;
+    padding-bottom: 2px !important;
+    margin-bottom: 8px !important;
+}
+[class*="shopViewWrapper"] h3 {
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+}
+
+/* cartao de produto: campo branco com moldura de 1px, sem sombra
+   difusa e sem animacao de escala - o realce e retangular */
+[class*="shop__"] [class*="productCardContainer"],
+[class*="shop__"] [class*="ProductCard"],
+[class*="shop__"] [class*="collectibleCard"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: 1px 1px 0 #d9d5c8 !important;
+    transform: none !important;
+    transition: none !important;
+}
+[class*="shop__"] [class*="productCardContainer"]:hover,
+[class*="shop__"] [class*="ProductCard"]:hover,
+[class*="shop__"] [class*="collectibleCard"]:hover {
+    border-color: var(--xp-select) !important;
+    background: #f2f6fd !important;
+}
+/* preco e nome do produto em Tahoma, na escala do resto do tema */
+[class*="shop__"] [class*="productCard"] [class*="name"],
+[class*="shop__"] [class*="productCard"] [class*="price"] {
+    font-family: Tahoma, 'Segoe UI', sans-serif !important;
+}
+
+/* os banroes de destaque ("Bora la!", "Compre a Colecao") caem na
+   regra de botao XP da secao (U) por serem .hasText_; aqui so tiro
+   o arredondado que alguns trazem inline */
+[class*="shop__"] button {
+    border-radius: 3px !important;
+}
+
+/* a pagina inteira sobre a face do XP, nao sobre branco puro -
+   assim as faixas de secao se distinguem do cartao branco */
+[class*="shopViewWrapper"] {
+    background: var(--xp-face) !important;
+}
+
+/* --- header da loja -------------------------------------------
+   Tres problemas medidos:
+   1) .shop__ tem background branco, entao a FAIXA do header saia
+      branca e a aba nao lia como aba - ela precisa da face bege
+      atras, igual no chat.
+   2) os itens da toolbar (busca, coracao, contador de gemas) tem
+      32px de altura e comecavam em y=46, enquanto a faixa vai de
+      51 a 73: eles vazavam para cima, por cima da barra de menu.
+   3) o conteudo nao tinha painel - a arte da campanha encostava
+      direto no topo da janela. Agora o .shopViewWrapper e o mesmo
+      painel afundado do chat. ---------------------------------- */
+[class*="shop__"] {
+    background: transparent !important;
+}
+[class*="shopViewWrapper"] {
+    border: 1px solid #919b9c !important;
+    box-shadow:
+        inset 1px 1px #fcfcfe,
+        1px 2px 2px 0 rgba(208, 206, 191, 0.75) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+/* tudo da toolbar da loja cabe nos 22px da faixa */
+[class*="headerBar__"] [class*="toolbar_"] > * {
+    height: 22px !important;
+    min-height: 0 !important;
+    align-self: center !important;
+}
+[class*="headerBar__"] [class*="toolbar_"] > * > * {
+    height: 22px !important;
+    min-height: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+/* coracao vira botao solto de toolbar, como os do chat */
+[class*="headerBar__"] [class*="wishlistButton__"] {
+    width: 24px !important;
+    border: 1px solid transparent !important;
+    border-radius: 3px !important;
+    justify-content: center !important;
+}
+[class*="headerBar__"] [class*="wishlistButton__"]:hover {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #fffaef, #ffe6a8 60%, #ffd25e) !important;
+}
+/* o contador de gemas vira um campo afundado com numero em Tahoma */
+[class*="headerBar__"] [class*="toolbar_"] [class*="container_a3e8db"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px #7f7c6e !important;
+    padding: 0 6px !important;
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+}
+[class*="headerBar__"] [class*="toolbar_"] [class*="container_a3e8db"] * {
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+}
+
+/* o campo de busca da loja vinha com DOIS fundos: a moldura
+   branca do .searchBar__ e, dentro dela, um segundo campo cinza
+   (.container__5a838). O de dentro fica transparente. */
+[class*="headerBar__"] [class*="searchBar__"] {
+    box-shadow:
+        inset 1px 1px #7f7c6e,
+        inset -1px -1px var(--xp-light) !important;
+    padding: 0 4px !important;
+}
+[class*="headerBar__"] [class*="searchBar__"] * {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+}
+
+/* ============================================================
+   (Z) CONTADOR DE ORBS E A PAGINA DE MISSOES
+
+   1) O contador que "saia pra fora" nao era largura, era ALTURA:
+      medido, o .container_a3e8db tem 32px e ia de y=46 a y=78,
+      enquanto a faixa do header vai de 51 a 73 - ele furava a
+      barra de menu em cima e o painel embaixo. Minha regra
+      anterior so alcancava dois niveis de filhos do toolbar, e
+      esse span esta tres niveis abaixo.
+
+   2) A pagina de Missoes tem a MESMA estrutura da loja
+      (page__ > container > headerBar__ + scroller), so muda o
+      hash. Ancorando em [class*="headerBar__"] e no irmao
+      scroller, as duas paginas recebem o mesmo tratamento - e
+      qualquer pagina futura que a Discord montar nesse molde.
+   ============================================================ */
+[class*="headerBar__"] [class*="toolbar_"] [class*="container__44ee9"],
+[class*="headerBar__"] [class*="toolbar_"] [class*="clickable_"],
+[class*="headerBar__"] [class*="toolbar_"] [class*="container_a3e8db"],
+[class*="headerBar__"] [class*="toolbar_"] [class*="stack_"] {
+    height: 22px !important;
+    min-height: 0 !important;
+    max-height: 22px !important;
+    align-self: center !important;
+    box-sizing: border-box !important;
+}
+
+/* painel afundado tambem nas paginas que usam scroller direto */
+[class*="headerBar__"] + [class*="scroller"] {
+    border: 1px solid #919b9c !important;
+    box-shadow:
+        inset 1px 1px #fcfcfe,
+        1px 2px 2px 0 rgba(208, 206, 191, 0.75) !important;
+    box-sizing: border-box !important;
+}
+
+/* a aba de Missoes tambem so tinha o icone */
+[class*="children__"] > [class*="headerBarContent__"]::before {
+    content: "Missões";
+    font: 700 12px Tahoma, 'Segoe UI', sans-serif;
+    color: #000000;
+    white-space: nowrap;
+}
+[class*="children__"] > [class*="headerBarContent__"] {
+    display: flex !important;
+    align-items: center !important;
+    height: 24px !important;
+    margin-left: -6px !important;
+}
+
+/* ============================================================
+   (AA) PAGINA DO NITRO
+
+   Dois problemas proprios desta pagina:
+
+   1) A barra de navegacao inteira (.navBarContent__131a1, com
+      Inicio / Novidades / Planos / Comparar + acoes) mora DENTRO
+      do .children__ - ou seja, ela virava uma aba unica de 674px
+      de largura. Aqui o .children__ perde a cara de aba e a nav
+      vira uma barra de ferramentas; o nome da janela ja esta na
+      barra de titulo.
+
+   2) O botao "Inscrever-se" e a variante .expressive_, que pinta
+      o fundo num filho separado (.expressiveFill_ + um
+      .expressiveBackground_ com blur). Meu gradiente ia no
+      <button>, mas o filho continuava por cima - era o retangulo
+      preto do print.
+   ============================================================ */
+
+/* :has() de FILHO DIRETO, que e barato (o caro e o descendente).
+   Nao ha atributo estavel aqui para distinguir esta aba. */
+/* precisa do .upperContainer_ na frente: a regra da aba na secao
+   (I) tem tres seletores de atributo e ganhava por especificidade */
+[class*="upperContainer_"] > [class*="children__"]:has(> [class*="navBarContent__"]) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    height: 26px !important;
+    padding: 0 !important;
+}
+
+/* os links da nav como botoes de toolbar do XP */
+[class*="navBarSectionContent__"] > * {
+    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+    border: 1px solid transparent !important;
+    border-radius: 3px !important;
+    padding: 2px 8px !important;
+    transition: none !important;
+}
+[class*="navBarSectionContent__"] > *:hover {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #fffaef, #ffe6a8 60%, #ffd25e) !important;
+}
+[class*="navBarSectionContent__"] > [class*="selected"],
+[class*="navBarSectionContent__"] > [aria-current="page"] {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #e6c887, #fbe3ab 45%, #fff2d4) !important;
+    box-shadow: inset 1px 1px #c9a24a !important;
+    font-weight: 700 !important;
+}
+/* o sublinhado animado da nav nao existe no XP */
+[class*="navBarSectionContent__"] [class*="underline"],
+[class*="navBarSectionContent__"] > *::after {
+    display: none !important;
+}
+/* acoes da direita cabem na faixa */
+[class*="navBarActions__"] {
+    height: 22px !important;
+    align-self: center !important;
+}
+[class*="navBarActions__"] > * {
+    height: 22px !important;
+    min-height: 0 !important;
+}
+
+/* --- a variante "expressive": o fundo mora nos filhos --- */
+[class*="expressive_"] [class*="expressiveFill_"] {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
+    border-radius: 3px !important;
+}
+[class*="expressive_"] [class*="expressiveBackground_"] {
+    display: none !important;
+}
+[class*="expressive_"] {
+    color: #000000 !important;
+}
+
+/* painel afundado tambem aqui (a pagina do Nitro nao tem
+   headerBar_, o scroller e filho do .applicationStore_) */
+[class*="applicationStore_"] [class*="scroller__"] {
+    border: 1px solid #919b9c !important;
+    box-shadow:
+        inset 1px 1px #fcfcfe,
+        1px 2px 2px 0 rgba(208, 206, 191, 0.75) !important;
+    box-sizing: border-box !important;
+}
+
+/* Nesta pagina o conteudo comeca em y=47, ou seja, POR BAIXO do
+   header - por isso o rosa da campanha aparecia atras da nav
+   assim que tirei o fundo da aba. Duas coisas: a faixa vira opaca
+   e o conteudo desce os 26px da faixa, como nas outras paginas. */
+[class*="upperContainer_"] > [class*="children__"]:has(> [class*="navBarContent__"]) {
+    background: var(--xp-face) !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+[class*="applicationStore_"] {
+    padding-top: 26px !important;
+    box-sizing: border-box !important;
+}
+
+/* ============================================================
+   (AB) BARRAS DE ROLAGEM DO LUNA
+
+   O Discord tem duas: .thin_d125d2 (8px) e .auto_d125d2 (16px),
+   as duas com thumb arredondado, borda transparente e sem setas.
+   A do XP tem 17px, calha clara, polegar biselado e - o que mais
+   denuncia - BOTOES DE SETA nas pontas.
+
+   As setas sao SVG embutido em data URI: nao da para desenhar
+   triangulo em ::-webkit-scrollbar-button so com gradiente, e
+   data URI nao depende de arquivo externo (o tema e um .css
+   solto, nao um pacote).
+
+   Escrevo no seletor universal E nas duas classes do Discord,
+   porque as delas tem classe + pseudo-elemento e ganhariam por
+   especificidade.
+   ============================================================ */
+*::-webkit-scrollbar,
+[class*="thin_"]::-webkit-scrollbar,
+[class*="auto_"]::-webkit-scrollbar {
+    width: 17px !important;
+    height: 17px !important;
+}
+*::-webkit-scrollbar-track,
+[class*="thin_"]::-webkit-scrollbar-track,
+[class*="auto_"]::-webkit-scrollbar-track {
+    background: #f1f0e9 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 0 #d8d5c8 !important;
+}
+*::-webkit-scrollbar-thumb,
+[class*="thin_"]::-webkit-scrollbar-thumb,
+[class*="auto_"]::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #ffffff 0%, #f2f0e6 18%, #e4e1d1 55%, #cdc9b6 100%) !important;
+    border: 1px solid #9d9b8d !important;
+    border-radius: 0 !important;
+    background-clip: border-box !important;
+    min-height: 26px !important;
+    box-shadow:
+        inset 1px 1px #ffffff,
+        inset -1px -1px #b3b0a1 !important;
+}
+*::-webkit-scrollbar-thumb:hover,
+[class*="thin_"]::-webkit-scrollbar-thumb:hover,
+[class*="auto_"]::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #ffffff 0%, #fbf6e4 18%, #f0e9cf 55%, #ddd4b4 100%) !important;
+}
+/* barra horizontal: o biselado tem que girar 90 graus */
+*::-webkit-scrollbar-thumb:horizontal,
+[class*="thin_"]::-webkit-scrollbar-thumb:horizontal,
+[class*="auto_"]::-webkit-scrollbar-thumb:horizontal {
+    background: linear-gradient(180deg, #ffffff 0%, #f2f0e6 18%, #e4e1d1 55%, #cdc9b6 100%) !important;
+    min-width: 26px !important;
+}
+
+/* --- os botoes de seta das pontas --- */
+*::-webkit-scrollbar-button,
+[class*="thin_"]::-webkit-scrollbar-button,
+[class*="auto_"]::-webkit-scrollbar-button {
+    display: block !important;
+    width: 17px !important;
+    height: 17px !important;
+    background-color: #ece9d8 !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    border: 1px solid #9d9b8d !important;
+    box-shadow:
+        inset 1px 1px #ffffff,
+        inset -1px -1px #b3b0a1 !important;
+}
+*::-webkit-scrollbar-button:vertical:decrement,
+[class*="thin_"]::-webkit-scrollbar-button:vertical:decrement,
+[class*="auto_"]::-webkit-scrollbar-button:vertical:decrement {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="7" height="4"><path d="M3.5 0 7 4H0z" fill="%23000"/></svg>') !important;
+}
+*::-webkit-scrollbar-button:vertical:increment,
+[class*="thin_"]::-webkit-scrollbar-button:vertical:increment,
+[class*="auto_"]::-webkit-scrollbar-button:vertical:increment {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="7" height="4"><path d="M3.5 4 0 0h7z" fill="%23000"/></svg>') !important;
+}
+*::-webkit-scrollbar-button:horizontal:decrement,
+[class*="thin_"]::-webkit-scrollbar-button:horizontal:decrement,
+[class*="auto_"]::-webkit-scrollbar-button:horizontal:decrement {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="7"><path d="M0 3.5 4 0v7z" fill="%23000"/></svg>') !important;
+}
+*::-webkit-scrollbar-button:horizontal:increment,
+[class*="thin_"]::-webkit-scrollbar-button:horizontal:increment,
+[class*="auto_"]::-webkit-scrollbar-button:horizontal:increment {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="7"><path d="M4 3.5 0 7V0z" fill="%23000"/></svg>') !important;
+}
+/* Ao mandar display:block em TODO botao eu acabei ligando tambem
+   o par que o Chrome mantem escondido (start:increment e
+   end:decrement) - apareciam tres setas empilhadas embaixo.
+   Precisa repetir o seletor nas classes do Discord, senao a regra
+   generica delas empata e vence pela ordem. */
+*::-webkit-scrollbar-button:vertical:start:increment,
+*::-webkit-scrollbar-button:vertical:end:decrement,
+*::-webkit-scrollbar-button:horizontal:start:increment,
+*::-webkit-scrollbar-button:horizontal:end:decrement,
+[class*="thin_"]::-webkit-scrollbar-button:vertical:start:increment,
+[class*="thin_"]::-webkit-scrollbar-button:vertical:end:decrement,
+[class*="thin_"]::-webkit-scrollbar-button:horizontal:start:increment,
+[class*="thin_"]::-webkit-scrollbar-button:horizontal:end:decrement,
+[class*="auto_"]::-webkit-scrollbar-button:vertical:start:increment,
+[class*="auto_"]::-webkit-scrollbar-button:vertical:end:decrement,
+[class*="auto_"]::-webkit-scrollbar-button:horizontal:start:increment,
+[class*="auto_"]::-webkit-scrollbar-button:horizontal:end:decrement {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    border: none !important;
+}
+*::-webkit-scrollbar-button:active {
+    background-color: #dcd8c8 !important;
+    box-shadow: inset 1px 1px #b3b0a1 !important;
+}
+*::-webkit-scrollbar-corner {
+    background: #ece9d8 !important;
+}
+
+/* ============================================================
+   (AC) VISUALIZADOR DE IMAGEM
+
+   Ele e um .carouselModal_ com .root__49fc1, entao ja pegou a
+   moldura de janela da secao (W). O que sobrava era a barra de
+   acoes do Discord (.topBar__6088c: aproximar / salvar / abrir no
+   navegador / mais / fechar) flutuando POR CIMA da imagem.
+
+   Numa janela do XP isso e ruido: fica so o X, no lugar dele -
+   dentro da faixa de titulo. O topBar e filho direto do root
+   (que e position:relative), entao da para ancorar nele; e a
+   faixa e padding, nao area recortada, entao nada e cortado.
+   ============================================================ */
+[class*="carouselModal_"] [class*="topBar__"] {
+    position: absolute !important;
+    /* medido: aqui o deslocamento sai da caixa de CONTEUDO, ja
+       abaixo dos 26px da faixa - por isso -23px, e nao 3px */
+    top: -23px !important;
+    right: 4px !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: auto !important;
+    height: 20px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    z-index: 6 !important;
+}
+/* as acoes saem; o menu de contexto do proprio Discord continua
+   dando conta de salvar/abrir (botao direito na imagem) */
+[class*="carouselModal_"] [class*="topBar__"] > *:not([aria-label="Fechar"]):not([class*="closeButton__"]) {
+    display: none !important;
+}
+[class*="carouselModal_"] [class*="closeButton__"] {
+    width: 21px !important;
+    height: 20px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid #d43a1a !important;
+    border-radius: 0 0 3px 3px !important;
+    background: linear-gradient(180deg, #f18a72 0%, #e5563a 40%, #d8330f 60%, #f07f5f 100%) !important;
+    box-shadow: inset 0 1px rgba(255, 255, 255, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+[class*="carouselModal_"] [class*="closeButton__"]:hover {
+    background: linear-gradient(180deg, #f8a894 0%, #f0705a 40%, #e6482c 60%, #f79a80 100%) !important;
+}
+[class*="carouselModal_"] [class*="closeButton__"] svg {
+    width: 12px !important;
+    height: 12px !important;
+    color: #ffffff !important;
+}
+
+/* ============================================================
+   (AD) CONTROLES DE VIDEO
+
+   Classes do bundle:
+     .videoControlsCont_b824c5   a barra
+     .videoControlsBtn_b824c5    cada botao
+     .controlsBarItem_b824c5     item da barra (+ ...Active)
+     .mediaBarInteraction_b26b79 trilho de progresso/volume
+     .mediaBarProgress_b26b79    parte preenchida
+     .mediaBarGrabber_b26b79     a alcinha
+
+   Referencia e o Windows Media Player do XP: barra bege com luz
+   em cima, botoes chapados que so ganham moldura no hover, e o
+   trilho afundado com o preenchido em azul Luna.
+   ============================================================ */
+[class*="videoControlsCont_"] {
+    background: linear-gradient(180deg, #f5f4ee, #ece9d8 40%, #ddd9c8) !important;
+    border-top: 1px solid var(--xp-light) !important;
+    box-shadow: inset 0 -1px var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    padding: 3px 6px !important;
+    color: #000000 !important;
+}
+[class*="videoControlsBtn_"],
+[class*="controlsBarItem_"] {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+    transition: none !important;
+}
+[class*="videoControlsBtn_"]:hover,
+[class*="controlsBarItem_"]:hover {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #fffaef, #ffe6a8 60%, #ffd25e) !important;
+}
+[class*="controlsBarItemActive_"] {
+    border-color: #8e8b7c !important;
+    background: linear-gradient(180deg, #e6c887, #fbe3ab 45%, #fff2d4) !important;
+    box-shadow: inset 1px 1px #c9a24a !important;
+}
+[class*="videoControlsBtn_"] svg,
+[class*="controlsBarItem_"] svg {
+    color: #000000 !important;
+}
+[class*="videoControlsBtnContDisabled_"] svg {
+    color: #a5a190 !important;
+    filter: drop-shadow(1px 1px 0 #ffffff) !important;
+}
+/* tempo decorrido em Tahoma, como o WMP */
+[class*="videoControlsCont_"] [class*="timestamp_"] {
+    font: 11px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+}
+
+/* trilho afundado + preenchido azul */
+[class*="mediaBarInteraction_"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px #7f7c6e !important;
+    height: 10px !important;
+}
+[class*="mediaBarProgress_"] {
+    background: linear-gradient(180deg, #6fb4ff, #2f7fe8 50%, #0d55c4) !important;
+    border-radius: 0 !important;
+}
+[class*="mediaBarGrabber_"] {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
+    border-radius: 2px !important;
+    width: 9px !important;
+    height: 16px !important;
+    box-shadow: none !important;
+}
+
+/* ============================================================
+   (AE) NAO FIZ: esconder minimizar/maximizar com modal aberto
+
+   Os botoes visiveis moram em #app-mount > .bar_.systemBar_, que
+   e IRMAO de toda a arvore de layers - e o modal so aparece la
+   dentro. Como CSS nao seleciona irmao anterior nem ancestral, a
+   unica forma seria :has() com o #app-mount de sujeito.
+
+   Medi: essa regra sozinha leva a insercao de um no no DOM de
+   6,5 ms para 89,2 ms. E o pior caso do :has() - o sujeito e a
+   raiz da pagina, entao QUALQUER mutacao em qualquer lugar
+   invalida a regra. Os outros nove :has() do tema, todos com
+   sujeito raso, custam ~0.
+
+   Alternativa de graça, se um dia quisermos: baixar o z-index da
+   .systemBar_ para o overlay do modal cobri-la, como janela
+   modal do XP faz. Custa nada, mas trava minimizar/maximizar/
+   fechar do app enquanto o modal estiver aberto.
+   ============================================================ */
+
+/* ============================================================
+   (AF) A BARRA DE MENU DE VERDADE + O DIVISOR FEIO
+
+   1) O tracinho vertical ao lado dos botoes da janela e o
+      .winButtonsWithDivider_::before do proprio Discord - um
+      border-left de 34px de altura, que atravessava a faixa azul
+      e a de menu. Fora.
+
+   2) "Arquivo Editar Exibir Favoritos Ferramentas" era texto
+      decorativo meu num ::before: bonito e completamente morto.
+      Troco pelos comandos que existem de verdade nessa barra
+      (Caixa de entrada, Ajuda, Ferramentas do desenvolvedor),
+      cada um com rotulo ao lado do icone e destaque azul de item
+      de menu no hover. Agora o que parece clicavel clica.
+   ============================================================ */
+[class*="winButtonsWithDivider_"]::before {
+    display: none !important;
+    border: none !important;
+}
+
+/* o menu falso sai */
+[data-window-chrome="true"] > [class*="trailing_"]::before {
+    content: none !important;
+}
+
+/* os comandos reais viram itens de menu do XP */
+[data-window-chrome="true"] > [class*="trailing_"] [class*="clickable__"] {
+    width: auto !important;
+    height: 20px !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    border-radius: 0 !important;
+    font: 400 12px Tahoma, 'Segoe UI', sans-serif !important;
+    color: #000000 !important;
+}
+[data-window-chrome="true"] > [class*="trailing_"] [class*="clickable__"]:hover {
+    background: var(--xp-select) !important;
+    color: #ffffff !important;
+}
+[data-window-chrome="true"] > [class*="trailing_"] [class*="clickable__"]:hover svg {
+    color: #ffffff !important;
+}
+[data-window-chrome="true"] > [class*="trailing_"] [class*="clickable__"] svg {
+    width: 15px !important;
+    height: 15px !important;
+    flex: 0 0 auto !important;
+}
+/* O rotulo sai do proprio aria-label via attr(), nao de texto
+   escrito por mim: assim ele acompanha o idioma do Discord
+   sozinho ("Inbox"/"Help" em ingles) e nunca fica dessincronizado
+   do que o botao faz. */
+[data-window-chrome="true"] > [class*="trailing_"] [class*="clickable__"][aria-label]::after {
+    content: attr(aria-label);
+    font: 400 12px Tahoma, 'Segoe UI', sans-serif;
+    white-space: nowrap;
+}
+/* o primeiro item comeca colado na borda, como no XP */
+[data-window-chrome="true"] > [class*="trailing_"] {
+    padding-left: 4px !important;
+}
+
+/* --- por que fechar/minimizar/maximizar tinham parado ---------
+   A .bar_ inteira e uma regiao de arrastar do Electron
+   (-webkit-app-region: drag). Os botoes so escapam disso porque
+   moram dentro do .trailing_, que e no-drag. Eu tirei os botoes
+   de la com position:absolute e top:-24px para subirem para a
+   faixa azul - visualmente certo, mas o retangulo onde eles
+   passaram a ficar pertence a area de arrastar, entao o clique
+   virava "arrastar a janela" antes de chegar no botao.
+   Marcar no-drag explicitamente devolve o clique. --------------- */
+[data-window-chrome="true"] [class*="winButtons_"],
+[data-window-chrome="true"] [class*="winButton_"] {
+    -webkit-app-region: no-drag !important;
+}
+
+/* ============================================================
+   (AG) CANAL COM TOPICO ESTOURAVA A ABA
+
+   Medido no #bem-vindo: quando o canal tem topico, o
+   .topic__6ec1a (flex: 1 1 auto) fica DENTRO do .children__, que
+   e justamente o elemento que eu transformei em aba. Resultado:
+   a aba ia a 2725px de largura e empurrava a barra de ferramentas
+   para x=3020, fora da tela - era a "aba quebrada" do print.
+
+   Aba de janela mostra o nome do documento, nao a descricao dele.
+   Entao o topico (e o pontinho separador antes dele) saem do
+   header. O texto continua acessivel no proprio canal e no menu
+   do canal.
+   ============================================================ */
+[class*="upperContainer_"] > [class*="children__"] > [class*="topic__"] {
+    display: none !important;
+}
+/* o separador "•" so existe por causa do topico */
+[class*="upperContainer_"] > [class*="children__"] > svg[class*="separator"],
+[class*="upperContainer_"] > [class*="children__"] > [class*="titleWrapper_"] + svg {
+    display: none !important;
+}
+
+/* ============================================================
+   (AH) TELA DE VOZ / CHAMADA
+
+   Estrutura lida no DOM:
+     .callContainer_cb9592
+       .root_bfe55a                 <- o fundo preto
+         .videoControls_bfe55a
+           .gradientTop_ / .gradientBottom_   sombras escuras
+           .topControls_ / .bottomControls_
+             .centerControls_ > .centerButton_f1ceac ...
+             .edgeControls_ > .leftTrayIcon_ / .rightTrayIcon_
+         .videoGrid_a21736 > .row_d6271c > .tile_d6271c
+
+   O preto so faz sentido em tema escuro. Aqui a chamada vira um
+   painel afundado sobre a face do XP, com os quadros de video
+   emoldurados e a barra de baixo com cara de barra de status.
+   ============================================================ */
+[class*="callContainer_"] > [class*="root_"] {
+    background: var(--xp-face) !important;
+}
+[class*="videoGrid_"] {
+    background: #6e6a5e !important;
+    border: 1px solid var(--xp-shadow) !important;
+    box-shadow: inset 1px 1px #56534a !important;
+    box-sizing: border-box !important;
+}
+/* os degrades escuros existem para dar contraste sobre video;
+   sobre a face bege eles so sujam */
+[class*="gradientContainer_"] {
+    display: none !important;
+}
+
+/* cada participante num quadro com moldura, sem cantos */
+[class*="tile_d6271c"],
+[class*="tile_"][class*="noVerticalMargin"] {
+    border-radius: 0 !important;
+}
+[class*="tile_"] [class*="tileSizer_"] > * {
+    border-radius: 0 !important;
+    border: 1px solid #4a4740 !important;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35) !important;
+}
+
+/* --- barra de baixo: faixa de status do XP --- */
+[class*="bottomControls_"] {
+    background: linear-gradient(180deg, #f5f4ee, #ece9d8 45%, #ddd9c8) !important;
+    border-top: 1px solid var(--xp-light) !important;
+    box-shadow: inset 0 -1px var(--xp-shadow) !important;
+    padding: 3px 6px !important;
+    align-items: center !important;
+}
+[class*="topControls_"] {
+    background: transparent !important;
+}
+
+/* botoes redondos do Discord viram botao quadrado de toolbar */
+[class*="centerButton_f1ceac"],
+[class*="leftTrayIcon_"],
+[class*="rightTrayIcon_"],
+[class*="contextMenuNub_f1ceac"] {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
+    border-radius: 3px !important;
+    color: #000000 !important;
+    height: 26px !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+[class*="centerButton_f1ceac"] {
+    width: 30px !important;
+}
+[class*="centerButton_f1ceac"]:hover,
+[class*="leftTrayIcon_"]:hover,
+[class*="rightTrayIcon_"]:hover,
+[class*="contextMenuNub_f1ceac"]:hover {
+    box-shadow:
+        inset -1px 1px #fff0cf,
+        inset 1px 2px #fdd889,
+        inset -2px 2px #fbc761,
+        inset 2px -2px #e5a01a !important;
+}
+[class*="centerButton_f1ceac"] svg,
+[class*="leftTrayIcon_"] svg,
+[class*="rightTrayIcon_"] svg,
+[class*="contextMenuNub_f1ceac"] svg {
+    color: #000000 !important;
+    width: 18px !important;
+    height: 18px !important;
+}
+/* microfone mudo: o vermelho do Discord vira so o icone vermelho */
+[class*="centerButton_f1ceac"][class*="redGlow_"] svg {
+    color: #b81c1c !important;
+}
+/* desligar: unico botao colorido, como o X da janela */
+[class*="centerButton_f1ceac"][class*="disconnect_"] {
+    width: 44px !important;
+    border-color: #d43a1a !important;
+    background: linear-gradient(180deg, #f18a72 0%, #e5563a 40%, #d8330f 60%, #f07f5f 100%) !important;
+}
+[class*="centerButton_f1ceac"][class*="disconnect_"] svg {
+    color: #ffffff !important;
+}
+/* a "caret" de mais opcoes cola no botao do microfone */
+[class*="contextMenuNub_f1ceac"] {
+    width: 16px !important;
+    margin-left: -1px !important;
+}
+
+/* ============================================================
+   (AI) ACERTOS DA CHAMADA + JANELA DESTACADA + SLIDER
+
+   1) Area de acao: os botoes vinham em .buttonSection__1405b,
+      um agrupador que eu tinha deixado ganhar fundo e borda de
+      botao - viravam caixas de tamanhos diferentes (58px o do
+      microfone, 36px o do meio) com botoes dentro. O agrupador
+      volta a ser invisivel e todo botao passa a ter a mesma
+      altura.
+   2) Nome sobre o quadro de video: preto sobre a cor do avatar
+      nao le. Vira chip escuro com texto branco, como legenda de
+      video.
+   3) Slider do XP: trilho fino afundado, preenchido azul e
+      pegador retangular biselado (.slider_a562c8 e familia).
+   4) Janela destacada ("Nova Janela"): la o .trailing_ so tem os
+      botoes da janela - nao existe barra de menu -, entao os
+      46px do header viravam uma faixa azul enorme e vazia. O
+      :has() de filho detecta isso e reduz para so a barra de
+      titulo.
+   ============================================================ */
+
+/* --- (1) area de acao padronizada --- */
+[class*="buttonSection__"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    gap: 3px !important;
+    align-items: center !important;
+    display: flex !important;
+}
+[class*="centerControls_"] [class*="centerButton_"] {
+    width: 34px !important;
+    height: 30px !important;
+    margin: 0 !important;
+}
+[class*="centerControls_"] [class*="contextMenuNub_"] {
+    /* o nub esticava para 50px porque a fileira e align-items:
+       stretch e ele nao tem altura propria */
+    height: 30px !important;
+    min-height: 0 !important;
+    max-height: 30px !important;
+    align-self: center !important;
+    /* height:26 dava 48px de caixa: o nub e content-box e tem
+       padding vertical proprio */
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    margin: 0 0 0 -1px !important;
+}
+[class*="centerControls_"] [class*="centerButton_"][class*="disconnect_"] {
+    width: 52px !important;
+    height: 30px !important;
+    margin-left: 6px !important;
+}
+[class*="centerControls_"] > * ,
+[class*="centerControls_"] [class*="wrapper__"] {
+    align-items: center !important;
+}
+
+/* --- (2) nome sobre o video --- */
+[class*="tile_"] [class*="username_"],
+[class*="tile_"] [class*="nameTag"] {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8) !important;
+    font: 700 11px Tahoma, 'Segoe UI', sans-serif !important;
+}
+[class*="tile_"] [class*="usernameFooter"],
+[class*="tile_"] [class*="nameTagContainer"],
+[class*="tile_"] [class*="username_"] {
+    background: rgba(0, 0, 0, 0.55) !important;
+    border-radius: 0 !important;
+    padding: 1px 5px !important;
+}
+
+/* --- (3) slider do XP --- */
+[class*="slider_a562c8"] [class*="track_"],
+[class*="slider_"] > [class*="track_"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: inset 1px 1px #7f7c6e !important;
+    height: 6px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    bottom: auto !important;
+}
+[class*="barFill_"] {
+    background: linear-gradient(180deg, #6fb4ff, #2f7fe8 60%, #0d55c4) !important;
+    border-radius: 0 !important;
+}
+[class*="grabber_"] {
+    background: linear-gradient(180deg, #ffffff, #ecebe5 80%, #cdc9b6) !important;
+    border: 1px solid #4a4740 !important;
+    border-radius: 0 !important;
+    width: 11px !important;
+    height: 20px !important;
+    box-shadow:
+        inset 1px 1px #ffffff,
+        inset -1px -1px #b3b0a1 !important;
+}
+
+/* --- (4) janela destacada: header so com a barra de titulo --- */
+[data-window-chrome="true"]:has(> [class*="trailing_"] > [class*="winButtons_"]:only-child) {
+    /* so redefinir a variavel nao bastou: o min-height de 46px vem
+       de outra regra e ficou de pe. Vai explicito. */
+    --top-bar-height: 24px;
+    height: 24px !important;
+    min-height: 24px !important;
+}
+/* CUIDADO: os itens de menu NAO sao filhos diretos do .trailing_
+   (ficam dentro de .iconWrapper__/<a>), entao um
+   :not(:has(> .clickable__)) casa TAMBEM na janela principal e
+   derruba a barra de menu em cima da barra de titulo - foi o que
+   aconteceu na primeira tentativa. O teste certo e o contrario:
+   trailing cujo UNICO filho e o grupo de botoes. */
+[data-window-chrome="true"] > [class*="trailing_"]:has(> [class*="winButtons_"]:only-child) {
+    top: 0 !important;
+    height: 22px !important;
+    /* SO a largura dos botoes. O .trailing_ e -webkit-app-region:
+       no-drag; esticado de ponta a ponta ele cobria a barra de
+       titulo inteira e a janela destacada nao podia mais ser
+       arrastada. Encolhendo para a direita, o resto da barra
+       volta a ser area de arrasto. */
+    left: auto !important;
+    right: 0 !important;
+    width: auto !important;
+}
+[data-window-chrome="true"] > [class*="trailing_"] > [class*="winButtons_"]:only-child {
+    top: 1px !important;
+}
+
+/* --- o "card" preto atras do avatar na chamada ---------------
+   O quadrado colorido e um filho com a cor do usuario inline
+   (.background_fb62e2), que eu nao toco. O preto em volta era o
+   fundo proprio do .tile__2f4f7 (#1e1f22, do tema escuro do
+   Discord) aparecendo entre a moldura e o card. Ele passa a ter
+   a mesma cor do fundo da grade, entao some e sobra so a cor do
+   usuario. ------------------------------------------------------ */
+[class*="videoGrid_"] [class*="tile__"] {
+    background: #6e6a5e !important;
+}
