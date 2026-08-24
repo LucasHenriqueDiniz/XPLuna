@@ -182,6 +182,15 @@ principal também e derruba a barra de menu.
 que é a aba; com `flex: 1 1 auto` a aba vai a 2700px e joga a toolbar para fora
 da tela. Está escondido na seção (AG).
 
+**Alcinha de slider que não aparece.** `.mediaBarGrabber_` é um `<span>`.
+Sem `display: block` o `width`/`height` não pega e ela mede 0×0 — o CSS
+estava lá, aplicado, e mesmo assim invisível.
+
+**Nome de classe do bundle não é garantia.** A seção (AD) foi escrita a
+partir de `.videoControlsCont_`/`.controlsBarItem_` tiradas do dump do
+CSS. Nenhuma das duas existe no DOM: o player inline usa
+`.videoControls_`/`.videoButton_`. Confira no DOM, não no dump.
+
 **Máscara de avatar.** `foreignObject { mask: none }` é o que deixa o avatar
 quadrado — e é a mesma máscara que o plugin RadialStatus usa para recortar o
 anel de presença. Os dois não convivem.
