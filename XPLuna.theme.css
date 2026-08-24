@@ -3609,3 +3609,26 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     background: #ffffff !important;
 }
 
+
+/* ==========================================================================
+   (AL) SELO DE "CHAMADA DE VOZ ATIVA" NA BARRA DE SERVIDORES
+   O quadrado preto no canto do icone do servidor e o .iconBadge__ dentro do
+   .upperBadge_: o fundo dele vem de um token que resolve para oklab(0 0 0),
+   preto puro, porque por baixo o Discord continua no tema escuro. Vira um
+   selo XP: quadrado branco, borda de campo e alto-falante azul, igual ao
+   chip da coluna "Ativo agora" na secao (AJ).
+   O lowerBadge (contador de mencao) fica de fora de proposito - vermelho.
+   ========================================================================== */
+[class*="upperBadge_"] [class*="iconBadge__"] {
+    background: #ffffff !important;
+    border: 1px solid var(--xp-shadow) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: #1f6fe0 !important;
+}
+[class*="upperBadge_"] [class*="iconBadge__"] svg,
+[class*="upperBadge_"] [class*="iconBadge__"] path {
+    fill: #1f6fe0 !important;
+    color: #1f6fe0 !important;
+}
+
