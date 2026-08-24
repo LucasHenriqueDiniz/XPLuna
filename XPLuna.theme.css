@@ -3591,3 +3591,21 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     margin: 0 !important;
     padding: 4px 8px !important;
 }
+
+
+/* ==========================================================================
+   (AK) PILHA DE AVATARES DE QUEM ESTA NA CHAMADA
+   O .partyMember_ carrega uma mask SVG que recorta o avatar em circulo e
+   ainda abre uma mordida do lado para o proximo encaixar. Isso deixava dois
+   avatares redondos no meio de um tema onde todo avatar e quadrado, com uma
+   falha branca em forma de lua entre eles. Sem a mask o foreignObject por
+   baixo ja e quadrado (raio 3px), e a separacao vira uma borda XP de 1px.
+   ========================================================================== */
+[class*="partyMember_"] {
+    -webkit-mask: none !important;
+    mask: none !important;
+    border: 1px solid var(--xp-shadow) !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+}
+
