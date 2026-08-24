@@ -3135,23 +3135,48 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     border-top: 1px solid var(--xp-light) !important;
     box-shadow: inset 0 -1px var(--xp-shadow) !important;
     border-radius: 0 !important;
-    padding: 3px 6px !important;
+    /* o padrao e 39px de altura com icone de 32: no XP isso e um exagero */
+    padding: 2px 5px !important;
+    gap: 5px !important;
     color: #000000 !important;
 }
+/* botao XP de verdade, nao glifo solto: releva, ganha brilho ambar no hover
+   e afunda quando pressionado, como os transportes do Media Player */
 [class*="videoControls_"] [class*="videoButton_"],
 [class*="videoControls_"] [class*="volumeButton__"] {
-    background: transparent !important;
-    border: 1px solid transparent !important;
+    width: 22px !important;
+    height: 22px !important;
+    min-width: 22px !important;
+    flex: 0 0 22px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
     border-radius: 3px !important;
     color: #000000 !important;
     transition: none !important;
 }
 [class*="videoControls_"] [class*="videoButton_"]:hover,
 [class*="videoControls_"] [class*="volumeButton__"]:hover {
-    border-color: #8e8b7c !important;
     background: linear-gradient(180deg, #fffaef, #ffe6a8 60%, #ffd25e) !important;
 }
+[class*="videoControls_"] [class*="videoButton_"]:active,
+[class*="videoControls_"] [class*="volumeButton__"]:active {
+    background: linear-gradient(180deg, #d8d0c4, #ecebe5 40%) !important;
+    box-shadow: inset 1px 1px var(--xp-shadow) !important;
+}
+[class*="videoControls_"] [class*="contents__"] {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    height: auto !important;
+}
 [class*="videoControls_"] svg {
+    width: 14px !important;
+    height: 14px !important;
+    padding: 0 !important;
     color: #000000 !important;
 }
 /* tempo decorrido em Tahoma, como o WMP */
@@ -3178,6 +3203,10 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 }
 [class*="mediaBarWrapper_"] [class*="buffer_"] {
     background: #d8d4c4 !important;
+    border-radius: 0 !important;
+}
+[class*="mediaBarWrapper_"] [class*="mediaBarPreview_"] {
+    background: #b6d2f2 !important;
     border-radius: 0 !important;
 }
 [class*="mediaBarProgress_"] {
