@@ -3176,7 +3176,7 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     box-shadow: inset 1px 1px #7f7c6e !important;
     position: relative !important;
 }
-[class*="buffer_"] {
+[class*="mediaBarWrapper_"] [class*="buffer_"] {
     background: #d8d4c4 !important;
     border-radius: 0 !important;
 }
@@ -3198,6 +3198,25 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     border-radius: 2px !important;
     box-shadow: none !important;
 }
+/* O controle de volume e a MESMA barra girada 90 graus pelo bundle. Em
+   coordenadas locais "altura" vira espessura, entao a alcinha de 14px do
+   trilho horizontal sobrava 3px para cada lado e ficava pendurada fora da
+   barra. Aqui ela fica com a espessura do trilho. */
+[class*="vertical_"] [class*="mediaBarGrabber_"] {
+    height: 10px !important;
+    right: -3px !important;
+    margin-top: 2.5px !important;
+}
+/* O painel vai no .mediaBar__ vertical, nao no .volumeButtonSlider__: medi e
+   o wrapper e uma caixa de 116x54 que nao envolve o slider girado (54x140),
+   entao pintar ele desenha um retangulo ao lado do controle. */
+[class*="mediaBar__"][class*="vertical_"] {
+    background: linear-gradient(180deg, #f5f4ee, #ece9d8 40%, #ddd9c8) !important;
+    border: 1px solid var(--xp-frame-dark) !important;
+    border-radius: 0 !important;
+    box-shadow: inset -1px -1px var(--xp-shadow), inset 1px 1px var(--xp-light) !important;
+}
+
 /* o balao de tempo era preto: vira dica de ferramenta do XP */
 [class*="videoControls_"] [class*="bubble_"] {
     background: #ffffe1 !important;
