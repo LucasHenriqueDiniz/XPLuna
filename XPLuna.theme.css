@@ -3110,38 +3110,46 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
 /* ============================================================
    (AD) CONTROLES DE VIDEO
 
-   Reescrita depois de medir o player de verdade. As classes que
-   estavam aqui antes (.videoControlsCont_, .videoControlsBtn_,
-   .controlsBarItem_) sairam do dicionario do bundle e nunca
-   apareceram no DOM - o player inline usa outras:
+   Reescrito do zero em cima do player medido. As classes que
+   estavam aqui na primeira versao (.videoControlsCont_,
+   .controlsBarItem_) sairam do dump do bundle e nunca
+   existiram no DOM. As de verdade:
 
-     .videoControls_        a barra (vinha em rgba(0,0,0,.6))
-     .videoButton_          play/repetir e tela cheia
-     .volumeButton__        o alto-falante
-     .durationTimeDisplay_  os tempos
-     .mediaBarWrapper_      trilho de progresso/volume
-     .mediaBarProgress_     parte preenchida
-     .mediaBarGrabber_      a alcinha (e um <span>: sem display
-                            block o width/height nao pega, por
-                            isso ela media 0x0)
-     .bubble_               o balao de tempo ao arrastar
+     .videoControls_             a barra
+     .videoButton_               play/repetir e tela cheia
+     .volumeButton__             o alto-falante
+     .durationTimeDisplay_       os tempos
+     .mediaBarWrapper_           trilho
+     .mediaBarProgress_          preenchido
+     .mediaBarGrabber_           alcinha (<span>: sem display
+                                 block media 0x0)
+     .mediaBarInteractionVolume_ area do flyout de volume
 
-   Referencia e o Windows Media Player do XP: barra bege com luz
-   em cima, botoes chapados que so ganham moldura no hover, e o
-   trilho afundado com o preenchido em azul Luna.
+   Duas medidas mandam no desenho:
+
+   1. O padrao vem com 39px de altura e icone de 32px. E o dobro
+      do que cabe num transporte de Media Player do XP.
+
+   2. O volume e a MESMA barra girada 90 graus. Em coordenada
+      local, "altura" vira espessura. E a caixa que parece
+      envolver o flyout (.mediaBar__ vertical, 54x140) e bem
+      maior que o controle (trilho de 8x74) - pintar ela cobre
+      um quarto do video. O painel tem que ir na
+      .mediaBarInteractionVolume_, que e justa.
    ============================================================ */
+
+/* --- a barra ------------------------------------------------ */
 [class*="videoControls_"] {
     background: linear-gradient(180deg, #f5f4ee, #ece9d8 40%, #ddd9c8) !important;
     border-top: 1px solid var(--xp-light) !important;
     box-shadow: inset 0 -1px var(--xp-shadow) !important;
     border-radius: 0 !important;
-    /* o padrao e 39px de altura com icone de 32: no XP isso e um exagero */
     padding: 2px 5px !important;
     gap: 5px !important;
     color: #000000 !important;
 }
-/* botao XP de verdade, nao glifo solto: releva, ganha brilho ambar no hover
-   e afunda quando pressionado, como os transportes do Media Player */
+
+/* --- transportes: botao XP, nao glifo solto ----------------- */
 [class*="videoControls_"] [class*="videoButton_"],
 [class*="videoControls_"] [class*="volumeButton__"] {
     width: 22px !important;
@@ -3179,16 +3187,17 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     padding: 0 !important;
     color: #000000 !important;
 }
-/* tempo decorrido em Tahoma, como o WMP */
+
+/* --- tempos ------------------------------------------------- */
 [class*="durationTimeDisplay_"],
 [class*="durationTimeSeparator_"] {
     font: 11px Tahoma, 'Segoe UI', 'Segoe UI Emoji', sans-serif !important;
     color: #000000 !important;
 }
 
-/* trilho afundado + preenchido azul. O sulco fica no .mediaBarWrapper_;
-   o .mediaBarInteraction_ por fora e so area de clique, tem que ficar
-   transparente ou vira uma faixa branca em volta do trilho. */
+/* --- trilhos ------------------------------------------------ */
+/* o sulco fica no .mediaBarWrapper_; a .mediaBarInteraction_ por fora e so
+   area de clique - com fundo ela vira uma faixa branca em volta do trilho */
 [class*="mediaBarInteraction_"] {
     background: transparent !important;
     border: none !important;
@@ -3209,44 +3218,38 @@ button[class*="button_"][class*="hasText_"][class*="active_"]:active {
     background: #b6d2f2 !important;
     border-radius: 0 !important;
 }
+/* nada de position aqui: o .mediaBarProgress_ e absolute com
+   inset-inline-start:0 no bundle. Trocar para relative joga ele no fluxo do
+   flex e o preenchido descola das pontas - foi o que quebrou o volume. */
 [class*="mediaBarProgress_"] {
     background: linear-gradient(180deg, #6fb4ff, #2f7fe8 50%, #0d55c4) !important;
     border-radius: 0 !important;
-    position: relative !important;
 }
+/* A alcinha ja e absolute, com top:50% e margens negativas em coordenada
+   LOCAL - e por isso que ela acompanha a rotacao do volume de graca. So a
+   medida e a aparencia mudam. Ela nascia com transform:scale(0) e so
+   crescia no hover; no XP a alca do slider esta sempre la. */
 [class*="mediaBarGrabber_"] {
-    display: block !important;
-    position: absolute !important;
-    right: -4px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
     width: 8px !important;
     height: 14px !important;
+    margin-top: -7px !important;
+    margin-inline-end: -4px !important;
+    transform: scale(1) !important;
     background: linear-gradient(180deg, #ffffff, #ecebe5 86%, #d8d0c4) !important;
     border: 1px solid var(--xp-frame-dark) !important;
     border-radius: 2px !important;
     box-shadow: none !important;
+    transition: none !important;
 }
-/* O controle de volume e a MESMA barra girada 90 graus pelo bundle. Em
-   coordenadas locais "altura" vira espessura, entao a alcinha de 14px do
-   trilho horizontal sobrava 3px para cada lado e ficava pendurada fora da
-   barra. Aqui ela fica com a espessura do trilho. */
-[class*="vertical_"] [class*="mediaBarGrabber_"] {
-    height: 10px !important;
-    right: -3px !important;
-    margin-top: 2.5px !important;
-}
-/* O painel vai no .mediaBar__ vertical, nao no .volumeButtonSlider__: medi e
-   o wrapper e uma caixa de 116x54 que nao envolve o slider girado (54x140),
-   entao pintar ele desenha um retangulo ao lado do controle. */
-[class*="mediaBar__"][class*="vertical_"] {
-    background: linear-gradient(180deg, #f5f4ee, #ece9d8 40%, #ddd9c8) !important;
+
+/* --- flyout de volume --------------------------------------- */
+[class*="mediaBarInteractionVolume_"] {
+    background: linear-gradient(90deg, #f5f4ee, #ece9d8 40%, #ddd9c8) !important;
     border: 1px solid var(--xp-frame-dark) !important;
-    border-radius: 0 !important;
     box-shadow: inset -1px -1px var(--xp-shadow), inset 1px 1px var(--xp-light) !important;
 }
 
-/* o balao de tempo era preto: vira dica de ferramenta do XP */
+/* --- balao de tempo ----------------------------------------- */
 [class*="videoControls_"] [class*="bubble_"] {
     background: #ffffe1 !important;
     border: 1px solid #000000 !important;
